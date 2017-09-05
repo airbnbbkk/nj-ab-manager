@@ -1,0 +1,32 @@
+{
+  "name": "nj-ab-manager",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jake Kang",
+  "license": "ISC",
+  "dependencies": {
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1",
+    "tslib": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.26",
+    "@types/request": "^2.0.3",
+    "@types/request-promise": "^4.1.37",
+    "serverless-dynamodb-local": "^0.2.25",
+    "serverless-offline": "^3.15.3",
+    "serverless-plugin-simulate": "0.0.17",
+    "serverless-plugin-typescript": "^1.1.1",
+    "serverless-prune-plugin": "^1.1.2",
+    "serverless-webpack": "^2.2.2",
+    "ts-loader": "^2.3.4",
+    "tslint": "^5.7.0",
+    "typescript": "^2.4.2",
+    "webpack": "^3.5.5",
+    "webpack-node-externals": "^1.6.0"
+  }
+}
