@@ -1,11 +1,11 @@
 import { AirApi } from "../api/air-api";
+import { Stage, Tables } from '../constants';
 import { Dynamodb } from '../db/dynamodb';
 import { Singleton } from "../singleton/singleton";
-import { Tables, Stage } from '../constants';
-import ThreadRequest = Message.ThreadRequest;
-import ThreadDetailed = Message.ThreadDetailed;
 import ThreadCounts = Message.Metadata.ThreadCounts;
 import Thread = Message.Thread;
+import ThreadDetailed = Message.ThreadDetailed;
+import ThreadRequest = Message.ThreadRequest;
 import ThreadResponse = Message.ThreadResponse;
 
 export class Message extends Singleton {
@@ -27,7 +27,7 @@ export class Message extends Singleton {
 
         //await message.send(276569855, 'Nui!! We just got a new guest!! kihihihihihi');
 
-        await this._sendAll(newReservations, 'we\'ve got a new booking! kiki');
+        await this._sendAll(newReservations, 'we have a new booking Nui!');
     }
 
     private async _fetchNewReservation() {
@@ -71,7 +71,6 @@ export class Message extends Singleton {
             throw new Error(e);
         }
     }
-
 
     private async _sendAll(threads: Array<Thread>, message: string) {
         threads.forEach(async (_thread) => {
