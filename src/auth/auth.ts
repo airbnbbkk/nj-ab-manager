@@ -1,9 +1,8 @@
-import { ACCOUNT } from '../constants';
-import { AirApi } from "../api/air-api";
-import { Http } from "../http/http";
+import { AirApi } from '../api/air-api';
+import { ACCOUNT, Stage, Tables } from '../constants';
 import { Dynamodb } from '../db/dynamodb';
+import { Http } from '../http/http';
 import { Singleton } from '../singleton/singleton';
-import { Tables, Stage } from '../constants';
 
 export class Authorizer extends Singleton {
 
@@ -18,7 +17,7 @@ export class Authorizer extends Singleton {
         super();
     }
 
-    async init() {
+    public async init() {
         try {
             const token = await this._getToken();
             this._http.transformAuthRequest(token);
@@ -33,7 +32,7 @@ export class Authorizer extends Singleton {
         try {
             token = await this._getTokenFromDB();
             if (!token) {
-                throw Error('Cannot found token in DB!')
+                throw Error('Cannot found token in DB!');
             }
         } catch (e) {
             console.log('error _getToken ', e);
@@ -52,7 +51,7 @@ export class Authorizer extends Singleton {
 
         console.log('token has retrieved', token);
 
-        //await this._saveTokenToRepo(tokenResponse.access_token);
+        // await this._saveTokenToRepo(tokenResponse.access_token);
 
         await this._saveTokenToDB(token);
 
@@ -63,7 +62,7 @@ export class Authorizer extends Singleton {
         const param = {
             TableName: this.tokenTableName,
             Item: {
-                token: "token",
+                token: 'token',
                 value: token
             }
         };
@@ -75,47 +74,17 @@ export class Authorizer extends Singleton {
         const param = {
             TableName: this.tokenTableName,
             Key: {
-                token: "token"
+                token: 'token'
             }
         };
 
         const response = await this._db.read(param);
 
         if (!response.Item) {
-            throw Error('Token not found in DB!')
+            throw Error('Token not found in DB!');
         } else {
             this._http.transformAuthRequest(response.Item.value);
-            return response.Item.value
+            return response.Item.value;
         }
-    }
-
-    /*private async _saveTokenToRepo(token: string) {
-        const tokenDocument = {
-            _id: REPO.AUTH.docsId.token,
-            token: token,
-            isValid: true
-        };
-
-        return await this._repo.put(tokenDocument);
-    }
-
-    private async _getTokenFromRepo() {
-        const token: Authorizer.TokenDocument | DocumentError = await this._repo.get(REPO.AUTH.docsId.token);
-        if ((token as DocumentError).error) {
-            return false;
-        }
-        if (!(token as Authorizer.TokenDocument).isValid) {
-            await this._repo.remove(token as Authorizer.TokenDocument);
-            return false;
-        }
-
-        return token;
-
-    }*/
-
-    public async _invalidateToken(token: Authorizer.TokenDocument) {
-        let tokenDto = Object.assign(token);
-        tokenDto.isValid = false;
-        //await this._repo.put(tokenDto);
     }
 }

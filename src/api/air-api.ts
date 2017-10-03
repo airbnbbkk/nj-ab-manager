@@ -1,8 +1,8 @@
-import { AIRBNB_API } from "../constants";
-import { Http } from "../http/http";
-import ThreadResponse = Message.ThreadResponse;
-import ListingResponse = Listings.ListingResponse;
+import { AIRBNB_API } from '../constants';
+import { Http } from '../http/http';
 import { Singleton } from '../singleton/singleton';
+import ListingResponse = Listings.ListingResponse;
+import ThreadResponse = Message.ThreadResponse;
 
 export class AirApi extends Singleton {
 
@@ -12,11 +12,11 @@ export class AirApi extends Singleton {
         super();
     }
 
-    async fetchToken(id: string, pw: string) {
+    public async fetchToken(id: string, pw: string) {
         const body = {
-            'username': id,
-            'password': pw,
-            'prevent_account_creation': 'true'
+            username: id,
+            password: pw,
+            prevent_account_creation: 'true'
         };
 
         const options = {
@@ -37,11 +37,14 @@ export class AirApi extends Singleton {
         try {
             tokenResponse = await this._http.post(AIRBNB_API.ENDPOINTS.AUTH_PATH, body, options);
             console.log('tokenResponse', tokenResponse);
-            token = tokenResponse.access_token
+            token = tokenResponse.access_token;
+            if (!token) {
+                throw Error(`Token is ${token}!`);
+            }
         } catch (e) {
-            console.log('tokenResponse Error', tokenResponse);
-            if (e.error.access_token) {
-                token = e.error.access_token
+            console.log('tokenResponse Error', e);
+            if (e.access_token) {
+                token = e.access_token;
             } else {
                 throw Error('Failed to fetch token');
             }
@@ -52,14 +55,14 @@ export class AirApi extends Singleton {
         return token;
     }
 
-    async fetchAllListings() {
+    public async fetchAllListings() {
         const res: ListingResponse = await this._http.get(AIRBNB_API.ENDPOINTS.LISTINGS_PATH);
 
         return res;
     }
 
-    async fetchThreads(options: Message.ThreadRequest) {
-        let qs = {
+    public async fetchThreads(options: Message.ThreadRequest) {
+        const qs = {
             role: 'all',
             _format: 'for_mobile_inbox',
             _offset: 0,
@@ -79,7 +82,7 @@ export class AirApi extends Singleton {
         return res;
     }
 
-    async fetchReservations() {
+    public async fetchReservations() {
         const qs = {
             _format: 'for_host_dashboard',
             _offset: 0,
@@ -91,11 +94,11 @@ export class AirApi extends Singleton {
         return await this._http.get(AIRBNB_API.ENDPOINTS.RESERVATIONS_PATH, qs);
     }
 
-    async sendMessage(message: AirApi.message) {
+    public async sendMessage(message: AirApi.message) {
         return await this._http.post(AIRBNB_API.ENDPOINTS.MESSAGE_PATH, message);
     }
 
-    async getMessage() {
+    public async getMessage() {
         const qs = {
             _format: 'for_web_inbox',
             _offset: 0,

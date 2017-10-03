@@ -1,8 +1,8 @@
-import { AIRBNB_API } from "../constants";
-import * as request from "request";
-import * as requestPromise from "request-promise";
-import HttpInterface = Http.HttpInterface;
+import * as request from 'request';
+import * as requestPromise from 'request-promise';
+import { AIRBNB_API } from '../constants';
 import { Singleton } from '../singleton/singleton';
+import HttpInterface = Http.HttpInterface;
 
 export class Http extends Singleton implements HttpInterface {
     private _client: request.RequestAPI<requestPromise.RequestPromise, requestPromise.RequestPromiseOptions, request.RequiredUriUrl>;
@@ -12,20 +12,20 @@ export class Http extends Singleton implements HttpInterface {
         this._client = requestPromise;
     }
 
-    async get(path: string, qs?: object) {
-        let options = {
+    public async get(path: string, qs?: object) {
+        const options = {
             uri: AIRBNB_API.ENDPOINTS.HOST + path,
-            qs: qs
+            qs
         };
 
         return await this.request(options);
     }
 
-    async post(path: string, body: object, opt?: request.CoreOptions) {
-        let options: request.Options = {
+    public async post(path: string, body: object, opt?: request.CoreOptions) {
+        const options: request.Options = {
             method: 'POST',
             uri: AIRBNB_API.ENDPOINTS.HOST + path,
-            body: body
+            body
         };
 
         Object.assign(options, opt);
@@ -33,7 +33,7 @@ export class Http extends Singleton implements HttpInterface {
         return await this.request(options);
     }
 
-    transformAuthRequest(token: string) {
+    public transformAuthRequest(token: string) {
         const options = {
             headers: {
                 'X-Airbnb-API-Key': AIRBNB_API.KEY,
@@ -51,44 +51,20 @@ export class Http extends Singleton implements HttpInterface {
         this._client = this._client.defaults(options);
     }
 
-
-    private request(options: request.Options) {
+    private request(options: request.Options & any) {
         this._client.debug = false;
+        options.simple = false;
         return this._client(options)
             .then(res => {
-                console.log('http request response', res)
+                console.log('http request response', res);
                 return res;
             })
             .catch(async (err) => {
-                if (err.error.error_code === 401) {
-
+                console.log('request error', err);
+                if (err.error.error_code === 420) {
+                    return err;
                 }
                 throw Error(`Error http request:\n ${JSON.stringify(options)} \n ${err}`);
             });
     }
-
-    /*private async _fetchToken(id: string, pw: string) {
-        const body = {
-            'username': id,
-            'password': pw,
-            'prevent_account_creation': 'true'
-        };
-
-        const options = {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-Airbnb-API-Key': AIRBNB_API.KEY
-            },
-            json: true, // Automatically parses the JSON string in the response,
-            encoding: 'UTF-8',
-            gzip: true
-        };
-
-        const tokenResponse = await this.post(AIRBNB_API.ENDPOINTS.AUTH_PATH, body, options);
-
-        this.transformAuthRequest(tokenResponse.access_token);
-
-        return tokenResponse;
-    }*/
 }

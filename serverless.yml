@@ -132,7 +132,10 @@ resources:
 functions:
   hello:
     handler: handler.hello
-    events: ${self:custom.service.functions.events}
+    events: ${self:custom.service.functions.events.hello}
+  message:
+    handler: handler.message
+    events: ${self:custom.service.functions.events.message}
 
 
 #    The following are a few example events you can configure

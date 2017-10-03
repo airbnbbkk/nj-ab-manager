@@ -4,23 +4,22 @@ import { Singleton } from '../singleton/singleton';
 export class Dynamodb extends Singleton {
     private _docClient: any;
 
-
     private constructor() {
         super();
         this._docClient = new DocumentClient({
-            region: "ap-southeast-1"
+            region: 'ap-southeast-1'
         });
     }
 
     public create() {
 
-        let params_token = {
-            TableName: "Token",
+        const paramsToken = {
+            TableName: 'Token',
             KeySchema: [
-                {AttributeName: "token", KeyType: "HASH"}  //Partition key
+                {AttributeName: 'token', KeyType: 'HASH'}  // Partition key
             ],
             AttributeDefinitions: [
-                {AttributeName: "token", AttributeType: "S"}
+                {AttributeName: 'token', AttributeType: 'S'}
             ],
             ProvisionedThroughput: {
                 ReadCapacityUnits: 10,
@@ -44,11 +43,11 @@ export class Dynamodb extends Singleton {
 
         console.log('creating a table...');
 
-        return this._docClient.createTable(params_token).promise((err: any, data: any) => {
+        return this._docClient.createTable(paramsToken).promise((err: any, data: any) => {
             if (err) {
-                console.error("Unable to create table. Error JSON:", JSON.stringify(err, null, 2));
+                console.error('Unable to create table. Error JSON:', JSON.stringify(err, null, 2));
             } else {
-                console.log("Created table. Table description JSON:", JSON.stringify(data, null, 2));
+                console.log('Created table. Table description JSON:', JSON.stringify(data, null, 2));
             }
         });
     }
@@ -66,12 +65,12 @@ export class Dynamodb extends Singleton {
             }
         };*/
 
-        console.log("Adding a new item...", params);
-        return this._docClient.put(params, function (err: any, data: any) {
+        console.log('Adding a new item...', params);
+        return this._docClient.put(params, (err: any, data: any) => {
             if (err) {
-                console.error("Unable to add item. Error JSON:", JSON.stringify(err, null, 2));
+                console.error('Unable to add item. Error JSON:', JSON.stringify(err, null, 2));
             } else {
-                console.log("Added item:", data, JSON.stringify(data, null, 2));
+                console.log('Added item:', data, JSON.stringify(data, null, 2));
             }
         });
     }
@@ -87,9 +86,9 @@ export class Dynamodb extends Singleton {
 
         return this._docClient.get(params).promise((err: any, data: any) => {
             if (err) {
-                console.error("Unable to read item. Error JSON:", JSON.stringify(err, null, 2));
+                console.error('Unable to read item. Error JSON:', JSON.stringify(err, null, 2));
             } else {
-                console.log("GetItem succeeded:", JSON.stringify(data, null, 2));
+                console.log('GetItem succeeded:', JSON.stringify(data, null, 2));
                 return data;
             }
         });
@@ -117,12 +116,12 @@ export class Dynamodb extends Singleton {
             ReturnValues: "UPDATED_NEW"
         };*/
 
-        console.log("Updating the item...");
-        this._docClient.update(params, function (err: any, data: any) {
+        console.log('Updating the item...');
+        this._docClient.update(params, (err: any, data: any) => {
             if (err) {
-                console.error("Unable to update item. Error JSON:", JSON.stringify(err, null, 2));
+                console.error('Unable to update item. Error JSON:', JSON.stringify(err, null, 2));
             } else {
-                console.log("UpdateItem succeeded:", JSON.stringify(data, null, 2));
+                console.log('UpdateItem succeeded:', JSON.stringify(data, null, 2));
             }
         });
 
@@ -130,29 +129,28 @@ export class Dynamodb extends Singleton {
 
     public delete() {
 
-        let table = "Movies";
+        const table = 'Movies';
 
-        let year = 2015;
-        let title = "The Big New Movie";
+        const year = 2015;
+        const title = 'The Big New Movie';
 
-        let params = {
+        const params = {
             TableName: table,
             Key: {
-                "year": year,
-                "title": title
+                year,
+                title
             }
         };
 
-        console.log("Attempting a conditional delete...");
-        this._docClient.delete(params, function (err: any, data: any) {
+        console.log('Attempting a conditional delete...');
+        this._docClient.delete(params, (err: any, data: any) => {
             if (err) {
-                console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
+                console.error('Unable to delete item. Error JSON:', JSON.stringify(err, null, 2));
             } else {
-                console.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
+                console.log('DeleteItem succeeded:', JSON.stringify(data, null, 2));
             }
         });
 
     }
-
 
 }

@@ -1,7 +1,7 @@
-import { AirApi } from "../api/air-api";
+import { AirApi } from '../api/air-api';
 import { Stage, Tables } from '../constants';
 import { Dynamodb } from '../db/dynamodb';
-import { Singleton } from "../singleton/singleton";
+import { Singleton } from '../singleton/singleton';
 import ThreadCounts = Message.Metadata.ThreadCounts;
 import Thread = Message.Thread;
 import ThreadDetailed = Message.ThreadDetailed;
@@ -20,33 +20,19 @@ export class Message extends Singleton {
         this._db = Dynamodb.Singleton;
     }
 
-    async responseToNewReservations() {
+    public async responseToNewReservations() {
         const newReservations = await this._fetchNewReservation();
 
         console.log('new reservations', newReservations);
 
-        //await message.send(276569855, 'Nui!! We just got a new guest!! kihihihihihi');
+        // await message.send(276569855, 'Nui!! We just got a new guest!! kihihihihihi');
 
         await this._sendAll(newReservations, 'we have a new booking Nui!');
     }
 
-    private async _fetchNewReservation() {
-        const threadResponse = await this.fetchThreadByRole('reservations');
-        const newThreadCount = await this._updateThreadCounts();
-
-        console.log('newThreadCountDoc', newThreadCount);
-
-        return threadResponse.threads
-            .filter((thread) => !thread.responded)
-            .sort((a: ThreadDetailed, b: ThreadDetailed) =>
-                new Date(b.inquiry_reservation.pending_expires_at).getTime() - new Date(a.inquiry_reservation.pending_expires_at).getTime())
-            .slice(0, newThreadCount.reservations);
-            //newThreadCount.reservations
-    }
-
-    async fetchThreadByRole(role: Message.Role) {
+    public async fetchThreadByRole(role: Message.Role) {
         const options: ThreadRequest = {
-            role: role,
+            role,
             _format: 'for_messaging_sync'
         };
 
@@ -61,24 +47,38 @@ export class Message extends Singleton {
         return threadResponse;
     }
 
-    async send(id: number, message: string) {
+    public async send(id: number, message: string) {
         try {
-            await this._api.sendMessage({
-                message: message,
+            return await this._api.sendMessage({
+                message,
                 thread_id: id
-            })
+            });
         } catch (e) {
             throw new Error(e);
         }
     }
 
-    private async _sendAll(threads: Array<Thread>, message: string) {
+    private async _fetchNewReservation() {
+        const threadResponse = await this.fetchThreadByRole('reservations');
+        const newThreadCount = await this._updateThreadCounts();
+
+        console.log('newThreadCountDoc', newThreadCount);
+
+        return threadResponse.threads
+            .filter((thread) => !thread.responded)
+            .sort((a: ThreadDetailed, b: ThreadDetailed) =>
+                new Date(b.inquiry_reservation.pending_expires_at).getTime() - new Date(a.inquiry_reservation.pending_expires_at).getTime())
+            .slice(0, newThreadCount.reservations);
+        // newThreadCount.reservations
+    }
+
+    private async _sendAll(threads: Thread[], message: string) {
         threads.forEach(async (_thread) => {
             try {
                 await this._api.sendMessage({
-                    message: message,
+                    message,
                     thread_id: 276569855
-                })
+                });
             } catch (e) {
                 throw new Error(e);
             }
@@ -98,7 +98,6 @@ export class Message extends Singleton {
 
     private async _updateThreadCounts() {
         const threadMetaData = await this._getThreadMeta();
-        //const remoteThreadCountDoc = this._repo.toDocument(threadMetaData.filter_options, REPO.THREAD_META.docsId.counts);
         const remoteThreadCount = threadMetaData.filter_options;
 
         let localThreadCountDoc: any;
@@ -109,7 +108,6 @@ export class Message extends Singleton {
             localThreadCountDoc = remoteThreadCount;
         }
 
-
         console.log('localThreadCountDoc', localThreadCountDoc);
 
         await this._saveThreadCounts('threadCounts', remoteThreadCount);
@@ -117,9 +115,9 @@ export class Message extends Singleton {
     }
 
     private async _saveNewThreadCount(remoteCounts: ThreadCounts, localCounts: ThreadCounts) {
-        let newCounts: ThreadCounts = {} as any;
+        const newCounts: ThreadCounts = {} as any;
 
-        for (let key in remoteCounts) {
+        for (const key in remoteCounts) {
             if (remoteCounts.hasOwnProperty(key)) {
                 newCounts[key] = remoteCounts[key] - localCounts[key];
             }
@@ -133,12 +131,6 @@ export class Message extends Singleton {
     }
 
     private async _getThreadCounts() {
-        /*let countsDoc: Document<ThreadCount> = await this._repo.get(REPO.THREAD_META.docsId.counts);
-
-        if (countsDoc.error) {
-            countsDoc = null;
-        }*/
-
         const param = {
             TableName: this.threadCountsTableName,
             Key: {
@@ -149,21 +141,21 @@ export class Message extends Singleton {
         const threadCountsRes = await this._db.read(param);
 
         if (!threadCountsRes.Item) {
-            throw Error('Cannot find thread counts from DB!')
+            throw Error('Cannot find thread counts from DB!');
         }
 
         return threadCountsRes.Item;
     }
 
     private async _saveThreadCounts(id: string, counts: any, _returnDoc?: boolean) {
-        //const res = await this._repo.put(count);
-        //return returnDoc ? await this._repo.get(count._id) : res;
+        // const res = await this._repo.put(count);
+        // return returnDoc ? await this._repo.get(count._id) : res;
 
         const params = {
             TableName: this.threadCountsTableName,
             Item: {
-                id: id,
-                counts: counts
+                id,
+                counts
             }
         };
 
