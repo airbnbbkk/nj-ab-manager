@@ -43,7 +43,7 @@ export const message = async (event: any, _context: any, callback: any) => {
 
     console.log(event, _context);
 
-    const reqBody = event.body;
+    const reqBody = JSON.parse(event.body);
 
     try {
         await bootstrap.init();
