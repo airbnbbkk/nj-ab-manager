@@ -1,4 +1,4 @@
-import { Authorizer } from '../auth/auth';
+import { AirbnbAuthorizer } from '../auth/auth';
 import { Singleton } from '../singleton/singleton';
 
 const Stage = process.env.OPT_STAGE;
@@ -18,7 +18,7 @@ export class Bootstrap extends Singleton {
             console.warn('The app has already been bootstrapped.');
             return;
         }
-        return Authorizer.Singleton.init().then(() => {
+        return AirbnbAuthorizer.Singleton.init().then(() => {
             this._isBootstrapped = true;
             console.log('bootstrapping finished');
         }).catch((e: any) => {

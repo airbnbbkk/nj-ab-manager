@@ -22,7 +22,7 @@ export class Http extends Singleton implements HttpInterface {
     }
 
     public async post(path: string, body: object, opt?: request.CoreOptions) {
-        const options: request.Options = {
+        const options: requestPromise.Options = {
             method: 'POST',
             uri: AIRBNB_API.ENDPOINTS.HOST + path,
             body

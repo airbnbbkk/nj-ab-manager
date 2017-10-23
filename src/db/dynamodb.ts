@@ -2,53 +2,12 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import { Singleton } from '../singleton/singleton';
 
 export class Dynamodb extends Singleton {
-    private _docClient: any;
+    public documentClient: DocumentClient;
 
     private constructor() {
         super();
-        this._docClient = new DocumentClient({
+        this.documentClient = new DocumentClient({
             region: 'ap-southeast-1'
-        });
-    }
-
-    public create() {
-
-        const paramsToken = {
-            TableName: 'Token',
-            KeySchema: [
-                {AttributeName: 'token', KeyType: 'HASH'}  // Partition key
-            ],
-            AttributeDefinitions: [
-                {AttributeName: 'token', AttributeType: 'S'}
-            ],
-            ProvisionedThroughput: {
-                ReadCapacityUnits: 10,
-                WriteCapacityUnits: 10
-            }
-        };
-
-        /*let params_threadCount = {
-            TableName: "ThreadCounts",
-            KeySchema: [
-                {AttributeName: "id", KeyType: "HASH"}  //Partition key
-            ],
-            AttributeDefinitions: [
-                {AttributeName: "id", AttributeType: "S"}
-            ],
-            ProvisionedThroughput: {
-                ReadCapacityUnits: 10,
-                WriteCapacityUnits: 10
-            }
-        };*/
-
-        console.log('creating a table...');
-
-        return this._docClient.createTable(paramsToken).promise((err: any, data: any) => {
-            if (err) {
-                console.error('Unable to create table. Error JSON:', JSON.stringify(err, null, 2));
-            } else {
-                console.log('Created table. Table description JSON:', JSON.stringify(data, null, 2));
-            }
         });
     }
 
@@ -66,7 +25,7 @@ export class Dynamodb extends Singleton {
         };*/
 
         console.log('Adding a new item...', params);
-        return this._docClient.put(params, (err: any, data: any) => {
+        return this.documentClient.put(params, (err: any, data: any) => {
             if (err) {
                 console.error('Unable to add item. Error JSON:', JSON.stringify(err, null, 2));
             } else {
@@ -84,14 +43,7 @@ export class Dynamodb extends Singleton {
             }
         };*/
 
-        return this._docClient.get(params).promise((err: any, data: any) => {
-            if (err) {
-                console.error('Unable to read item. Error JSON:', JSON.stringify(err, null, 2));
-            } else {
-                console.log('GetItem succeeded:', JSON.stringify(data, null, 2));
-                return data;
-            }
-        });
+        return this.documentClient.get(params).promise();
 
     }
 
@@ -117,7 +69,7 @@ export class Dynamodb extends Singleton {
         };*/
 
         console.log('Updating the item...');
-        this._docClient.update(params, (err: any, data: any) => {
+        this.documentClient.update(params, (err: any, data: any) => {
             if (err) {
                 console.error('Unable to update item. Error JSON:', JSON.stringify(err, null, 2));
             } else {
@@ -143,7 +95,7 @@ export class Dynamodb extends Singleton {
         };
 
         console.log('Attempting a conditional delete...');
-        this._docClient.delete(params, (err: any, data: any) => {
+        this.documentClient.delete(params, (err: any, data: any) => {
             if (err) {
                 console.error('Unable to delete item. Error JSON:', JSON.stringify(err, null, 2));
             } else {

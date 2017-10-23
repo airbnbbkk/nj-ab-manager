@@ -4,9 +4,9 @@ import { Dynamodb } from '../db/dynamodb';
 import { Http } from '../http/http';
 import { Singleton } from '../singleton/singleton';
 
-export class Authorizer extends Singleton {
+export class AirbnbAuthorizer extends Singleton {
 
-    private readonly tokenTableName = Tables[Stage].AirbnbManagerToken;
+    private readonly tokenTableName = Tables[Stage].TOKEN;
 
     private _isAuthorized = false;
     private _http = Http.Singleton;

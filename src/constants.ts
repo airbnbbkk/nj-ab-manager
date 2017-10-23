@@ -18,24 +18,23 @@ export const enum LANGUAGE {
 export const MESSAGE_ROLE = {
     RESERVATIONS: 'reservations',
     UNREAD: 'unread'
-}
+};
 
 export const MESSAGE_FORMAT = {
     FOR_WEB_INBOX: 'for_web_inbox',
     FOR_MESSAGING_SYNC: 'for_messaging_sync'
-}
-
+};
 
 export const AIRBNB_API = {
     KEY: 'd306zoyjsyarp7ifhu67rjxn52tv0t20',
     ENDPOINTS: {
-        HOST: 'https://api.airbnb.com/',
-        AUTH_PATH: 'v1/authorize',
-        THREADS_PATH: 'v2/threads',
-        RESERVATIONS_PATH: 'v2/reservations',
-        MESSAGE_PATH: 'v2/messages',
-        REPLY_PATH: 'messaging/qt_reply_v2/',
-        LISTINGS_PATH: 'v2/listings?recommended_listing=true' //recommended_listing should be true always
+        HOST: 'api.airbnb.com',
+        AUTH_PATH: '/v1/authorize',
+        THREADS_PATH: '/v2/threads',
+        RESERVATIONS_PATH: '/v2/reservations',
+        MESSAGE_PATH: '/v2/messages',
+        REPLY_PATH: '/messaging/qt_reply_v2/',
+        LISTINGS_PATH: '/v2/listings?recommended_listing=true' //recommended_listing should be true always
     }
 };
 
@@ -67,16 +66,20 @@ export const DOCUMENT_ERROR = {
     }
 };
 
-export const Tables = <{ [key: string]: any } > {
+export const Tables = {
     dev: {
-        AirbnbManagerToken: "AirbnbManagerToken-dev",
-        AirbnbManagerThreadCounts: "AirbnbManagerThreadCounts-dev",
-        AirbnbManagerResponses: "AirbnbManagerResponses-dev"
+        TOKEN: 'AirbnbManagerToken-dev',
+        THREADCOUNTS: 'AirbnbManagerThreadCounts-dev',
+        RESPONSES: 'AirbnbManagerResponses-dev',
+        RESERVATIONS: 'AirbnbManagerReservations-dev',
+        TEST: 'AirbnbManagerTest-dev'
     },
     prod: {
-        AirbnbManagerToken: "AirbnbManagerToken",
-        AirbnbManagerThreadCounts: "AirbnbManagerThreadCounts",
-        AirbnbManagerResponses: "AirbnbManagerResponses"
+        TOKEN: 'AirbnbManagerToken',
+        THREADCOUNTS: 'AirbnbManagerThreadCounts',
+        RESPONSES: 'AirbnbManagerResponses',
+        RESERVATIONS: 'AirbnbManagerReservations',
+        TEST: 'AirbnbManagerTest'
     }
 
-};
+} as { [key: string]: any };

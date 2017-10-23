@@ -12,7 +12,7 @@ export class Message extends Singleton {
 
     private _api: AirApi;
     private _db: Dynamodb;
-    private readonly threadCountsTableName = Tables[Stage].AirbnbManagerThreadCounts;
+    private readonly threadCountsTableName = Tables[Stage].THREADCOUNTS;
 
     private constructor() {
         super();

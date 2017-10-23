@@ -21,9 +21,20 @@ provider:
   name: aws
   runtime: nodejs6.10
   region: ap-southeast-1
-  stage: prod
+  stage: dev
   environment:
     OPT_STAGE: ${self:custom.stage}
+  stackPolicy: # Optional CF stack policy. The example below allows updates to all resources except deleting/replacing EC2 instances (use with caution!)
+    - Effect: Allow
+      Principal: "*"
+      Action: "Update:*"
+      Resource: "*"
+  iamRoleStatements:
+    -  Effect: "Allow"
+       Action:
+         - "lambda:*"
+         - "dynamodb:*"
+       Resource: '*'
 
 custom:
   env:
@@ -36,6 +47,16 @@ custom:
   # the following will resolve identically in other serverless.yml files so long as they define
   # `custom.newService: ${file(<relative-path-to-this-file>/serverless.yml)}`
   # exportName: ${self:custom.newService.service}-export
+  dynamodb:
+    start:
+      port: 8001
+      inMemory: true
+      migrate: true
+      seed: false
+    # Uncomment only if you already have a DynamoDB running locally
+    # noStart: true
+  serverless-offline:
+    resourceRoutes: true
 
 
 # you can overwrite defaults here
@@ -78,15 +99,15 @@ resources:
       Properties:
         AttributeDefinitions:
           -
-            AttributeName: token
+            AttributeName: id
             AttributeType: S
         KeySchema:
           -
-            AttributeName: token
+            AttributeName: id
             KeyType: HASH
         ProvisionedThroughput:
-          ReadCapacityUnits: 10
-          WriteCapacityUnits: 10
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
         TableName: ${self:custom.service.tables.AirbnbManagerToken}
     AirbnbManagerThreadCounts:
           Type: 'AWS::DynamoDB::Table'
@@ -102,40 +123,72 @@ resources:
                 KeyType: HASH
 
             ProvisionedThroughput:
-              ReadCapacityUnits: 10
-              WriteCapacityUnits: 10
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
             TableName: ${self:custom.service.tables.AirbnbManagerThreadCounts}
     AirbnbManagerResponses:
+            Type: 'AWS::DynamoDB::Table'
+            Properties:
+              AttributeDefinitions:
+                -
+                  AttributeName: id
+                  AttributeType: S
+                -
+                  AttributeName: lang
+                  AttributeType: S
+
+              KeySchema:
+                -
+                  AttributeName: id
+                  KeyType: HASH
+                -
+                  AttributeName: lang
+                  KeyType: RANGE
+
+              ProvisionedThroughput:
+                ReadCapacityUnits: 1
+                WriteCapacityUnits: 1
+              TableName: ${self:custom.service.tables.AirbnbManagerResponses}
+    AirbnbManagerReservations:
               Type: 'AWS::DynamoDB::Table'
               Properties:
                 AttributeDefinitions:
                   -
-                    AttributeName: id
-                    AttributeType: S
-                  -
-                    AttributeName: lang
+                    AttributeName: confirmationCode
                     AttributeType: S
 
                 KeySchema:
                   -
-                    AttributeName: id
+                    AttributeName: confirmationCode
                     KeyType: HASH
-                  -
-                    AttributeName: lang
-                    KeyType: RANGE
 
                 ProvisionedThroughput:
-                  ReadCapacityUnits: 30
-                  WriteCapacityUnits: 30
-                TableName: ${self:custom.service.tables.AirbnbManagerResponses}
-
+                  ReadCapacityUnits: 1
+                  WriteCapacityUnits: 1
+                TableName: ${self:custom.service.tables.AirbnbManagerReservations}
 functions:
   hello:
     handler: handler.hello
     events: ${self:custom.service.functions.events.hello}
-  message:
-    handler: handler.message
-    events: ${self:custom.service.functions.events.message}
+  message: ${self:custom.service.functions.message}
+  db_create:
+    handler: src/handlers/db/create.create
+    events: ${self:custom.service.functions.events.db_create}
+  db_get:
+    handler: src/handlers/db/get.get
+    events: ${self:custom.service.functions.events.db_get}
+  db_update:
+    handler: src/handlers/db/update.update
+    events: ${self:custom.service.functions.events.db_update}
+  http_request:
+    handler: src/handlers/http/request.request
+  airbnb_fetch_token:
+    handler: src/handlers/airbnb/token/fetch.fetch
+  airbnb_get_token:
+      handler: src/handlers/airbnb/token/get.get
+      events: ${self:custom.service.functions.events.airbnb_get_token}
+  airbnb_update_token:
+      handler: src/handlers/airbnb/token/update.update
 
 
 #    The following are a few example events you can configure
@@ -185,10 +238,10 @@ functions:
 plugins:
   - serverless-webpack
   - serverless-dynamodb-local
-  - serverless-offline
   - serverless-prune-plugin
+  - serverless-offline
 
 package:
   individually: true
-  include:
-      - request
+  exclude:
+       - node_modules/**/*

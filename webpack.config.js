@@ -10,7 +10,7 @@ module.exports = {
     output: {
         libraryTarget: 'commonjs',
         path: path.join(__dirname, 'dist'),
-        filename: 'handler.js' // this should match the first part of function handler in serverless.yml
+        filename: '[name].js' // this should match the first part of function handler in serverless.yml
     },
     module: {
         loaders: [

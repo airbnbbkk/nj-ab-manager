@@ -9,7 +9,8 @@
     "declaration": false,
     "removeComments": false,
     "noLib": false,
-    "importHelpers": true,
+    "importHelpers": false,
+    "allowJs": true,
     "lib": [
       "dom",
       "es2016"
