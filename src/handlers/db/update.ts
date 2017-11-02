@@ -2,7 +2,7 @@ import { Callback, Context, Handler } from 'aws-lambda';
 import { AWSError } from 'aws-sdk/lib/error';
 import { Dynamodb } from '../../db/dynamodb';
 
-const dynamoDb = Dynamodb.Singleton.documentClient;
+const dynamoDb = Dynamodb.Singleton.db;
 
 const update: Handler = (event: any, _context: Context, callback: Callback) => {
     const timestamp = new Date().getTime();

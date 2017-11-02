@@ -44,6 +44,7 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   # globalSchedule: rate(10 minutes)
   webpackIncludeModules: true
+
   # the following will resolve identically in other serverless.yml files so long as they define
   # `custom.newService: ${file(<relative-path-to-this-file>/serverless.yml)}`
   # exportName: ${self:custom.newService.service}-export
@@ -109,79 +110,30 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:custom.service.tables.AirbnbManagerToken}
-    AirbnbManagerThreadCounts:
+    AirbnbManagerBookings:
           Type: 'AWS::DynamoDB::Table'
           Properties:
             AttributeDefinitions:
               -
                 AttributeName: id
                 AttributeType: S
-
             KeySchema:
               -
                 AttributeName: id
                 KeyType: HASH
-
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
-            TableName: ${self:custom.service.tables.AirbnbManagerThreadCounts}
-    AirbnbManagerResponses:
-            Type: 'AWS::DynamoDB::Table'
-            Properties:
-              AttributeDefinitions:
-                -
-                  AttributeName: id
-                  AttributeType: S
-                -
-                  AttributeName: lang
-                  AttributeType: S
-
-              KeySchema:
-                -
-                  AttributeName: id
-                  KeyType: HASH
-                -
-                  AttributeName: lang
-                  KeyType: RANGE
-
-              ProvisionedThroughput:
-                ReadCapacityUnits: 1
-                WriteCapacityUnits: 1
-              TableName: ${self:custom.service.tables.AirbnbManagerResponses}
-    AirbnbManagerReservations:
-              Type: 'AWS::DynamoDB::Table'
-              Properties:
-                AttributeDefinitions:
-                  -
-                    AttributeName: confirmationCode
-                    AttributeType: S
-
-                KeySchema:
-                  -
-                    AttributeName: confirmationCode
-                    KeyType: HASH
-
-                ProvisionedThroughput:
-                  ReadCapacityUnits: 1
-                  WriteCapacityUnits: 1
-                TableName: ${self:custom.service.tables.AirbnbManagerReservations}
+            TableName: ${self:custom.service.tables.AirbnbManagerBookings}
 functions:
-  hello:
-    handler: handler.hello
-    events: ${self:custom.service.functions.events.hello}
-  message: ${self:custom.service.functions.message}
-  db_create:
-    handler: src/handlers/db/create.create
-    events: ${self:custom.service.functions.events.db_create}
+  db_create: ${self:custom.service.functions.db_create}
   db_get:
     handler: src/handlers/db/get.get
     events: ${self:custom.service.functions.events.db_get}
   db_update:
     handler: src/handlers/db/update.update
     events: ${self:custom.service.functions.events.db_update}
-  http_request:
-    handler: src/handlers/http/request.request
+  http_request: ${self:custom.service.functions.http_request}
   airbnb_fetch_token:
     handler: src/handlers/airbnb/token/fetch.fetch
   airbnb_get_token:
@@ -189,6 +141,12 @@ functions:
       events: ${self:custom.service.functions.events.airbnb_get_token}
   airbnb_update_token:
       handler: src/handlers/airbnb/token/update.update
+  airbnb_send_message: ${self:custom.service.functions.airbnb_send_message}
+  airbnb_get_message: ${self:custom.service.functions.airbnb_get_message}
+  airbnb_get_booking: ${self:custom.service.functions.airbnb_get_booking}
+  airbnb_schedule_checkup: ${self:custom.service.functions.airbnb_schedule_checkup}
+  airbnb_schedule_greeting: ${self:custom.service.functions.airbnb_schedule_greeting}
+  schedule_save_new_bookings: ${self:custom.service.functions.schedule_save_new_bookings}
 
 
 #    The following are a few example events you can configure
@@ -243,5 +201,3 @@ plugins:
 
 package:
   individually: true
-  exclude:
-       - node_modules/**/*

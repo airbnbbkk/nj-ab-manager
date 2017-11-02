@@ -3,7 +3,7 @@ import { GetItemOutput } from '../../../node_modules/aws-sdk/clients/dynamodb';
 import { AWSError } from '../../../node_modules/aws-sdk/lib/error';
 import { Dynamodb } from '../../db/dynamodb';
 
-const dynamoDb = Dynamodb.Singleton.documentClient;
+const dynamoDb = Dynamodb.Singleton.db;
 
 const get: Handler = (event: any, _context: Context, callback: Callback) => {
     const params = {

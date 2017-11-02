@@ -1,7 +1,7 @@
 import { Callback, Context, Handler } from 'aws-lambda';
-import * as rq from '../../../node_modules/minimal-request-promise';
+import * as rq from 'minimal-request-promise';
 
-const request: Handler = async (event: any, _context: Context, callback: Callback) => {
+const request: Handler = (event: any, _context: Context, callback: Callback) => {
     console.log('event', event);
     let response: object = {};
 
@@ -16,7 +16,7 @@ const request: Handler = async (event: any, _context: Context, callback: Callbac
 
     console.log('request options', options);
 
-    await rq(options)
+    rq(options)
         .then((res: any) => {
             console.log('http request response', res);
             response = {
@@ -24,6 +24,7 @@ const request: Handler = async (event: any, _context: Context, callback: Callbac
                 statusCode: 200,
                 body: res.body
             };
+            callback(null, response);
         })
         .catch((err: any) => {
             console.error('request error', err);
@@ -33,10 +34,8 @@ const request: Handler = async (event: any, _context: Context, callback: Callbac
                 body: err.body,
                 statusMessage: err.statusMessage
             };
+            callback(null, response);
         });
-
-    callback(null, response);
-
 };
 
 export { request };

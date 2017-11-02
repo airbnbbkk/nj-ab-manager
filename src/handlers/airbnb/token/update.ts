@@ -28,7 +28,7 @@ const update: Handler = async (event: any, _context: Context, callback: Callback
     await lambda.invoke(params, async (err, res) => {
         let response: any;
 
-        response = lambdaUtil.convertInvocationResToLambdaRes(res);
+        response = lambdaUtil.convertInvocationResToLambdaProxyRes(res);
 
         if (!response || !response.body || err) {
             console.error('error updating Airbnb token', response || err);

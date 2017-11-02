@@ -1,66 +1,39 @@
 import { APIGatewayEvent, Context, ProxyCallback, ProxyHandler } from 'aws-lambda';
-import * as Lambda from 'aws-sdk/clients/lambda';
 import { AIRBNB_API, Stage } from '../../../constants';
 import { LambdaUtil } from '../../../util/lambda';
 
 const lambdaUtil = new LambdaUtil();
-const lambda = new Lambda();
 
 const send: ProxyHandler = async (event: APIGatewayEvent,
                                   _context: Context,
                                   callback: ProxyCallback) => {
     let response: any;
-    let resBody: any;
 
-    const reqBody = JSON.parse(event.body);
+    console.log(event);
 
-    console.log(event, _context);
-
-    const body = {
-        thread_id: reqBody.thread_id,
-        message: reqBody.message
-    };
-
+    const reqBody = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
     const token = await _getToken();
 
-    const options = {
-        method: 'POST',
-        host: AIRBNB_API.ENDPOINTS.HOST,
-        path: AIRBNB_API.ENDPOINTS.MESSAGE_PATH,
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-Airbnb-API-Key': 'd306zoyjsyarp7ifhu67rjxn52tv0t20',
-            'X-Airbnb-OAuth-Token': token
-        },
-        body
-    };
+    if (typeof reqBody.thread_id !== 'object') {
+        await _sendRequest(reqBody, token);
 
-    const params = {
-        FunctionName: `airbnb-manager-${Stage}-http_request`,
-        InvocationType: 'RequestResponse',
-        Payload: JSON.stringify(options)
-    };
-
-    console.log('sending Airbnb message', params);
-    await lambda.invoke(params)
-        .promise()
-        .then(res => {
-            response = lambdaUtil.convertInvocationResToLambdaRes(res);
-            console.log('Airbnb message sent', response);
-            resBody = response;
-        })
-        .catch(err => {
-            console.error('sending Airbnb message failed', err);
+    } else {
+        reqBody.thread_id.forEach(async (threadId: string) => {
+            const newReqBody = {
+                thread_id: threadId,
+                message: reqBody.message
+            };
+            await _sendRequest(newReqBody, token);
         });
+    }
 
     response = {
-        statusCode: resBody.error_code || 200,
+        statusCode: 200,
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' // Required for CORS support to work
         },
-        body: JSON.stringify(resBody)
+        body: 'sending messages has requested'
     };
 
     callback(null, response);
@@ -73,16 +46,34 @@ const _getToken = async () => {
         Payload: ''
     };
 
-    return await lambda.invoke(params).promise()
-        .then(res => {
-            const response = lambdaUtil.convertInvocationResToLambdaRes(res);
+    const res = await lambdaUtil.invoke(params);
 
-            return response.body;
-        })
-        .catch(err => {
-            console.error('failed to get token', err);
-            return err;
-        });
+    return res.body;
+};
+
+const _sendRequest = async (reqBody: any, token: string) => {
+
+    const options = {
+        method: 'POST',
+        host: AIRBNB_API.ENDPOINTS.HOST,
+        path: AIRBNB_API.ENDPOINTS.MESSAGE_PATH,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Airbnb-API-Key': 'd306zoyjsyarp7ifhu67rjxn52tv0t20',
+            'X-Airbnb-OAuth-Token': token
+        },
+        body: reqBody
+    };
+
+    const params = {
+        FunctionName: `airbnb-manager-${Stage}-http_request`,
+        InvocationType: 'Event',
+        Payload: JSON.stringify(options)
+    };
+
+    console.log('invoking sending Airbnb message', params);
+    await lambdaUtil.invoke(params);
 };
 
 export { send };

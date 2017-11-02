@@ -34,7 +34,7 @@ const fetch: Handler = (_event: any, _context: Context, callback: Callback) => {
 
     console.log('fetching Airbnb token', params);
     lambda.invoke(params, (err, res) => {
-        const response = lambdaUtil.convertInvocationResToLambdaRes(res);
+        const response = lambdaUtil.convertInvocationResToLambdaProxyRes(res);
 
         if (err) {
             console.log('fetching Airbnb token failed', err);

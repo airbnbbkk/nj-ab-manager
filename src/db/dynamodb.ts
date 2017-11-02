@@ -1,12 +1,17 @@
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { AWSError } from 'aws-sdk/lib/error';
+import * as uuidv1 from 'uuid/v1';
 import { Singleton } from '../singleton/singleton';
+import BatchWriteItemInput = DocumentClient.BatchWriteItemInput;
+import BatchWriteItemOutput = DocumentClient.BatchWriteItemOutput;
+import PutItemOutput = DocumentClient.PutItemOutput;
 
 export class Dynamodb extends Singleton {
-    public documentClient: DocumentClient;
+    public db: DocumentClient;
 
     private constructor() {
         super();
-        this.documentClient = new DocumentClient({
+        this.db = new DocumentClient({
             region: 'ap-southeast-1'
         });
     }
@@ -25,13 +30,28 @@ export class Dynamodb extends Singleton {
         };*/
 
         console.log('Adding a new item...', params);
-        return this.documentClient.put(params, (err: any, data: any) => {
-            if (err) {
-                console.error('Unable to add item. Error JSON:', JSON.stringify(err, null, 2));
-            } else {
-                console.log('Added item:', data, JSON.stringify(data, null, 2));
-            }
-        });
+        return this.db.put(params).promise()
+            .then((data: PutItemOutput) => {
+                console.log('Added an item:', data, JSON.stringify(data, null));
+                return data;
+            })
+            .catch((err: AWSError) => {
+                console.error('Unable to add an item:', JSON.stringify(err, null, 2));
+                return err;
+            });
+    }
+
+    public batchWrite(params: BatchWriteItemInput) {
+        console.log('batch adding new items...', JSON.stringify(params));
+        return this.db.batchWrite(params).promise()
+            .then((data: BatchWriteItemOutput) => {
+                console.log('Added items:', data, JSON.stringify(data, null));
+                return data;
+            })
+            .catch((err: AWSError) => {
+                console.error('Unable to batch write items:', JSON.stringify(err, null, 2));
+                return err;
+            });
     }
 
     public read(params: any) {
@@ -43,7 +63,7 @@ export class Dynamodb extends Singleton {
             }
         };*/
 
-        return this.documentClient.get(params).promise();
+        return this.db.get(params).promise();
 
     }
 
@@ -69,7 +89,7 @@ export class Dynamodb extends Singleton {
         };*/
 
         console.log('Updating the item...');
-        this.documentClient.update(params, (err: any, data: any) => {
+        this.db.update(params, (err: any, data: any) => {
             if (err) {
                 console.error('Unable to update item. Error JSON:', JSON.stringify(err, null, 2));
             } else {
@@ -95,7 +115,7 @@ export class Dynamodb extends Singleton {
         };
 
         console.log('Attempting a conditional delete...');
-        this.documentClient.delete(params, (err: any, data: any) => {
+        this.db.delete(params, (err: any, data: any) => {
             if (err) {
                 console.error('Unable to delete item. Error JSON:', JSON.stringify(err, null, 2));
             } else {
@@ -105,4 +125,63 @@ export class Dynamodb extends Singleton {
 
     }
 
+    public createBatchWriteParam(items: any[], keyList?: string[]) {
+        const timestamp = new Date().getTime();
+        const params = items.map((item: any) => {
+
+            const param: any = {
+                PutRequest: {
+                    Item: {
+                        id: item.id || uuidv1(),
+                        created_at: timestamp,
+                        updated_at: timestamp
+                    }
+                }
+            };
+
+            (keyList || Object.keys(item)).forEach((key: string) => {
+                this._addProperties(param.PutRequest.Item, item, key);
+                this._processProperties(param.PutRequest.Item);
+            });
+
+            return param;
+        });
+
+        return params;
+    }
+
+    private _addProperties(target: Dict, obj: Dict, key: string) {
+        if (key.includes('.')) {
+            key.split('.').reduce((o, name) => {
+                if (typeof o[name] !== 'object') {
+                    _assign(target, name, o);
+                } else {
+                    target[name] = target[name] || {};
+                    target = target[name];
+                }
+                return o[name];
+            }, obj);
+
+        } else {
+            _assign(target, key, obj);
+        }
+
+        function _assign(t: Dict, k: string, o: any) {
+            const name = k.split('=');
+            console.log('_assign', t, name, o);
+            t[name[1] || name[0]] = o[name[0]];
+        }
+    }
+
+    private _processProperties(param: any) {
+        const dateKeys = ['start_date', 'end_date'];
+
+        // change string dates to UNIX time number
+        dateKeys.forEach(date => {
+            if (param.hasOwnProperty(date)) {
+                param[date] = new Date(param[date]).getTime();
+            }
+        });
+        return param;
+    }
 }

@@ -11,9 +11,7 @@ const get: Handler = async (_event: any, _context: Context, callback: Callback) 
     const payload = {
         body: {
             table: Tables[Stage].TOKEN,
-            Key: {
-                token: 'token'
-            }
+            id: 'token'
         }
     };
 
@@ -27,7 +25,7 @@ const get: Handler = async (_event: any, _context: Context, callback: Callback) 
     await lambda.invoke(params)
         .promise()
         .then(async (res) => {
-            const response = lambdaUtil.convertInvocationResToLambdaRes(res);
+            const response = lambdaUtil.convertInvocationResToLambdaProxyRes(res);
 
             if (!response || !response.body) {
                 try {
@@ -43,7 +41,8 @@ const get: Handler = async (_event: any, _context: Context, callback: Callback) 
                 }
             } else {
                 console.log('Airbnb token has retrieved from db', response);
-                callback(null, response);
+                const token = {body: JSON.parse(response.body).token};
+                callback(null, token);
             }
         })
         .catch(err => {
@@ -62,7 +61,7 @@ const _fetchToken = async () => {
 
     console.log('fetching Airbnb token');
     return await lambda.invoke(params).promise().then(res => {
-        response = lambdaUtil.convertInvocationResToLambdaRes(res);
+        response = lambdaUtil.convertInvocationResToLambdaProxyRes(res);
 
         if (!response || !response.body) {
             console.log('error fetching Airbnb token');
@@ -85,7 +84,7 @@ const _saveToken = (token: string): void => {
 
     const params = {
         FunctionName: `airbnb-manager-${Stage}-airbnb_update_token`,
-        InvocationType: 'RequestResponse',
+        InvocationType: 'Event',
         Payload: JSON.stringify({body})
     };
 
@@ -96,7 +95,7 @@ const _saveToken = (token: string): void => {
             throw Error(`Error invoking lambda: ${params.FunctionName} \n${err}`);
         }
 
-        const response = lambdaUtil.convertInvocationResToLambdaRes(res);
+        const response = lambdaUtil.convertInvocationResToLambdaProxyRes(res);
 
         if (response.statusCode === 500) {
             console.error('Error saving token to db', response);

@@ -1,8 +1,8 @@
 import { ProxyResult } from 'aws-lambda';
-import { InvocationResponse } from '../../node_modules/aws-sdk/clients/lambda';
+import * as Lambda from 'aws-sdk/clients/lambda';
 
 class LambdaUtil {
-    public convertInvocationResToLambdaRes(res: InvocationResponse): ProxyResult {
+    public convertInvocationResToLambdaProxyRes(res: Lambda.InvocationResponse): ProxyResult {
         console.log('converting invocation response', res);
         if (!res) {
             console.log('invocation response is false', res);
@@ -19,6 +19,25 @@ class LambdaUtil {
         }
 
         return response;
+    }
+
+    public async invoke(params: Lambda.Types.InvocationRequest) {
+        const lambda = new Lambda();
+
+        return await lambda.invoke(params)
+            .promise()
+            .then(res => {
+                let response = null;
+                if (params.InvocationType === 'RequestResponse') {
+                    response = this.convertInvocationResToLambdaProxyRes(res);
+                }
+                console.log('Lambda invoked successfully', response);
+                return response;
+            })
+            .catch(err => {
+                console.error('Failed to invoke Lambda', err);
+                throw Error(err);
+            });
     }
 }
 

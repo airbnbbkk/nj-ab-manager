@@ -33,7 +33,8 @@ export const AIRBNB_API = {
         THREADS_PATH: '/v2/threads',
         RESERVATIONS_PATH: '/v2/reservations',
         MESSAGE_PATH: '/v2/messages',
-        REPLY_PATH: '/messaging/qt_reply_v2/',
+        REPLY_PATH: '/messaging/qt_reply_v2',
+        MULTI_CALENDAR: '/v2/calendars',
         LISTINGS_PATH: '/v2/listings?recommended_listing=true' //recommended_listing should be true always
     }
 };
@@ -72,14 +73,78 @@ export const Tables = {
         THREADCOUNTS: 'AirbnbManagerThreadCounts-dev',
         RESPONSES: 'AirbnbManagerResponses-dev',
         RESERVATIONS: 'AirbnbManagerReservations-dev',
-        TEST: 'AirbnbManagerTest-dev'
+        BOOKINGS: 'AirbnbManagerBookings-dev'
     },
     prod: {
         TOKEN: 'AirbnbManagerToken',
         THREADCOUNTS: 'AirbnbManagerThreadCounts',
         RESPONSES: 'AirbnbManagerResponses',
         RESERVATIONS: 'AirbnbManagerReservations',
-        TEST: 'AirbnbManagerTest'
+        BOOKINGS: 'AirbnbManagerBookings'
     }
 
 } as { [key: string]: any };
+
+export const UNIX_TIME = {
+    DAY: 86400000
+};
+
+export const HOUSE_INFO: { [code: number]: any } = {
+    16268602: {
+        code: 1,
+        wifi: {
+            name: 'nui1',
+            pw: '1234512345'
+        },
+        doorlock: '08031*'
+    },
+    16874939: {
+        code: 2,
+        wifi: {
+            name: 'nui2',
+            pw: '1234512345'
+        },
+        doorlock: '08032*'
+
+    },
+    17972084: {
+        code: 3,
+        wifi: {
+            name: 'nui3',
+            pw: '1234512345'
+        },
+        doorlock: '08033*'
+    },
+    18722790: {
+        code: 4,
+        wifi: {
+            name: 'nui4',
+            pw: '1234512345'
+        },
+        doorlock: '08034*'
+    },
+    19097139: {
+        code: 5,
+        wifi: {
+            name: 'nui5',
+            pw: '1234512345'
+        },
+        doorlock: '08035*'
+    },
+    20777226: {
+        code: 6,
+        wifi: {
+            name: 'M & M Residence',
+            pw: '1234567890'
+        },
+        doorlock: '4732*'
+    },
+    21170179: {
+        code: 7,
+        wifi: {
+            name: 'nui7',
+            pw: '1234512345'
+        },
+        doorlock: '08037*'
+    }
+};
