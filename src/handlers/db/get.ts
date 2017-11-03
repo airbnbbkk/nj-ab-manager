@@ -1,11 +1,9 @@
 import { Callback, Context, Handler } from 'aws-lambda';
-import { GetItemOutput } from '../../../node_modules/aws-sdk/clients/dynamodb';
-import { AWSError } from '../../../node_modules/aws-sdk/lib/error';
 import { Dynamodb } from '../../db/dynamodb';
 
-const dynamoDb = Dynamodb.Singleton.db;
+const dynamoDb = Dynamodb.Singleton;
 
-const get: Handler = (event: any, _context: Context, callback: Callback) => {
+const get: Handler = async (event: any, _context: Context, callback: Callback) => {
     const params = {
         TableName: event.body.table,
         Key: {
@@ -14,22 +12,14 @@ const get: Handler = (event: any, _context: Context, callback: Callback) => {
     };
 
     console.log('getting item', event);
-    dynamoDb.get(params, (error: AWSError, result: GetItemOutput) => {
-        // handle potential errors
-        if (error) {
-            console.error('error getting item', error);
-            callback(error);
-        } else {
-            // create a response
-            const response = {
-                statusCode: 200,
-                body: result.Item
-            };
+    const res = await dynamoDb.get(params);
 
-            console.log('successfully got data from db', response);
-            callback(null, response);
-        }
-    });
+    const response = {
+        statusCode: 200,
+        body: res.Item
+    };
+
+    callback(null, response);
 };
 
 export { get };

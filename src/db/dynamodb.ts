@@ -4,14 +4,16 @@ import * as uuidv1 from 'uuid/v1';
 import { Singleton } from '../singleton/singleton';
 import BatchWriteItemInput = DocumentClient.BatchWriteItemInput;
 import BatchWriteItemOutput = DocumentClient.BatchWriteItemOutput;
+import GetItemInput = DocumentClient.GetItemInput;
+import GetItemOutput = DocumentClient.GetItemOutput;
 import PutItemOutput = DocumentClient.PutItemOutput;
 
 export class Dynamodb extends Singleton {
-    public db: DocumentClient;
+    private _db: DocumentClient;
 
     private constructor() {
         super();
-        this.db = new DocumentClient({
+        this._db = new DocumentClient({
             region: 'ap-southeast-1'
         });
     }
@@ -30,7 +32,7 @@ export class Dynamodb extends Singleton {
         };*/
 
         console.log('Adding a new item...', params);
-        return this.db.put(params).promise()
+        return this._db.put(params).promise()
             .then((data: PutItemOutput) => {
                 console.log('Added an item:', data, JSON.stringify(data, null));
                 return data;
@@ -43,7 +45,7 @@ export class Dynamodb extends Singleton {
 
     public batchWrite(params: BatchWriteItemInput) {
         console.log('batch adding new items...', JSON.stringify(params));
-        return this.db.batchWrite(params).promise()
+        return this._db.batchWrite(params).promise()
             .then((data: BatchWriteItemOutput) => {
                 console.log('Added items:', data, JSON.stringify(data, null));
                 return data;
@@ -54,48 +56,30 @@ export class Dynamodb extends Singleton {
             });
     }
 
-    public read(params: any) {
-        /*let params = {
-            TableName: table,
-            Key:{
-                "year": year,
-                "title": title
-            }
-        };*/
-
-        return this.db.get(params).promise();
-
+    public get(params: GetItemInput) {
+        console.log('batch adding new items...', JSON.stringify(params));
+        return this._db.get(params).promise()
+            .then((data: GetItemOutput) => {
+                console.log('Got an item:', data, JSON.stringify(data, null));
+                return data;
+            })
+            .catch((err: AWSError) => {
+                console.error('Unable to get an items:', JSON.stringify(err, null, 2));
+                return err;
+            });
     }
 
     public update(params: any) {
-
-// Update the item, unconditionally,
-
-        /*let params =
-
-        let params = {
-            TableName: table,
-            Key: {
-                "year": year,
-                "title": title
-            },
-            UpdateExpression: "set info.rating = :r, info.plot=:p, info.actors=:a",
-            ExpressionAttributeValues: {
-                ":r": 5.5,
-                ":p": "Everything happens all at once.",
-                ":a": ["Larry", "Moe", "Curly"]
-            },
-            ReturnValues: "UPDATED_NEW"
-        };*/
-
-        console.log('Updating the item...');
-        this.db.update(params, (err: any, data: any) => {
-            if (err) {
-                console.error('Unable to update item. Error JSON:', JSON.stringify(err, null, 2));
-            } else {
-                console.log('UpdateItem succeeded:', JSON.stringify(data, null, 2));
-            }
-        });
+        console.log('Updating an item...', params);
+        return this._db.update(params).promise()
+            .then((data: PutItemOutput) => {
+                console.log('Updated an item:', data, JSON.stringify(data, null));
+                return data;
+            })
+            .catch((err: AWSError) => {
+                console.error('Failed to update an item:', JSON.stringify(err, null, 2));
+                return err;
+            });
 
     }
 
@@ -115,7 +99,7 @@ export class Dynamodb extends Singleton {
         };
 
         console.log('Attempting a conditional delete...');
-        this.db.delete(params, (err: any, data: any) => {
+        this._db.delete(params, (err: any, data: any) => {
             if (err) {
                 console.error('Unable to delete item. Error JSON:', JSON.stringify(err, null, 2));
             } else {

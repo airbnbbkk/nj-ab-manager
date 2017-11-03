@@ -1,14 +1,14 @@
 import { Callback, Context, Handler } from 'aws-lambda';
-import { Airbnb } from '../../airbnb/airbnb';
 import { HOUSE_INFO, Stage, UNIX_TIME } from '../../constants';
+import { Message } from '../../message/message';
 import { LambdaUtil } from '../../util/lambda';
 
 const greeting: Handler = async (_event: any,
                                  _context: Context,
                                  callback: Callback) => {
 
-    const lambdaUtil = new LambdaUtil();
-    const airbnb = new Airbnb();
+    const lambdaUtil = LambdaUtil.Singleton;
+    const message = Message.Singleton;
 
     const nowTime = new Date().getTime();
     const options = {
@@ -54,7 +54,7 @@ const greeting: Handler = async (_event: any,
                 Payload: JSON.stringify({
                     body: {
                         thread_id: 276569855,
-                        message: _getMessages(airbnb.findLanguage(thread.text_preview), thread.inquiry_listing.id)
+                        message: _getMessages(message.findLanguage(thread.text_preview), thread.inquiry_listing.id)
                     }
                 })
             };

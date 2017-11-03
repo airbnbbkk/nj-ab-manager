@@ -1,11 +1,10 @@
-import * as Lambda from 'aws-sdk/clients/lambda';
 import { AIRBNB_API, Stage } from '../constants';
+import { Singleton } from '../singleton/singleton';
 import { LambdaUtil } from '../util/lambda';
 
-const lambdaUtil = new LambdaUtil();
-const lambda = new Lambda();
+const lambdaUtil = LambdaUtil.Singleton;
 
-class Airbnb {
+class Airbnb extends Singleton {
     public async request(method: string, path: string, body: object) {
         const token = await this._getToken();
 
@@ -34,38 +33,10 @@ class Airbnb {
 
         console.log('sending Airbnb request', params);
 
-        return await lambda.invoke(params)
-            .promise()
-            .then(res => {
-                const response = lambdaUtil.convertInvocationResToLambdaProxyRes(res);
-                console.log('got Airbnb request', response);
-                return response;
-            })
-            .catch(err => {
-                console.error('sending Airbnb message failed', err);
-                return Error(err);
-            });
-    }
+        const res = await lambdaUtil.invoke(params);
 
-    public findLanguage(text: string): Locale {
-        let lang: Locale = 'en';
+        return res;
 
-        if (!text) {
-            return lang;
-        }
-
-        const tests = [
-            {regex: /[\uac00-\ud7af]+/g, lang: 'ko'},
-            {regex: /[\u4e00-\u9fff]+/g, lang: 'cn'}];
-
-        tests.forEach((test: any) => {
-            if (text.match(test.regex)) {
-                lang = test.lang;
-                return;
-            }
-        });
-
-        return lang;
     }
 
     private async _getToken() {
@@ -75,16 +46,9 @@ class Airbnb {
             Payload: ''
         };
 
-        return await lambda.invoke(params).promise()
-            .then(res => {
-                const response = lambdaUtil.convertInvocationResToLambdaProxyRes(res);
+        const tokenRes = await lambdaUtil.invoke(params);
 
-                return response.body;
-            })
-            .catch(err => {
-                console.error('failed to get token', err);
-                return err;
-            });
+        return tokenRes.body;
     }
 
     private jsonToQueryString(json: any) {

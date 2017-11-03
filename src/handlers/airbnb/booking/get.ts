@@ -3,7 +3,7 @@ import { AWSError } from 'aws-sdk/lib/error';
 import { Airbnb } from '../../../airbnb/airbnb';
 import { ACCOUNT, AIRBNB_API } from '../../../constants';
 
-const airbnb = new Airbnb();
+const airbnb = Airbnb.Singleton;
 
 const get: ProxyHandler = async (event: any,
                                  _context: Context,

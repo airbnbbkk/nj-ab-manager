@@ -1,7 +1,9 @@
 import { ProxyResult } from 'aws-lambda';
 import * as Lambda from 'aws-sdk/clients/lambda';
+import { Stage } from '../constants';
+import { Singleton } from '../singleton/singleton';
 
-class LambdaUtil {
+class LambdaUtil extends Singleton {
     public convertInvocationResToLambdaProxyRes(res: Lambda.InvocationResponse): ProxyResult {
         console.log('converting invocation response', res);
         if (!res) {
@@ -38,6 +40,16 @@ class LambdaUtil {
                 console.error('Failed to invoke Lambda', err);
                 throw Error(err);
             });
+    }
+
+    public getInvocationRequestParam(fnName: string, invocType: string, body: Dict): Lambda.Types.InvocationRequest {
+        return {
+            FunctionName: `airbnb-manager-${Stage}-${fnName}`,
+            InvocationType: invocType,
+            Payload: JSON.stringify({
+                body
+            })
+        };
     }
 }
 

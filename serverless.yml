@@ -110,29 +110,34 @@ resources:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
         TableName: ${self:custom.service.tables.AirbnbManagerToken}
-    AirbnbManagerBookings:
+    Bookings:
           Type: 'AWS::DynamoDB::Table'
           Properties:
             AttributeDefinitions:
               -
                 AttributeName: id
                 AttributeType: S
+              -
+                AttributeName: end_date
+                AttributeType: N
             KeySchema:
               -
                 AttributeName: id
                 KeyType: HASH
+              -
+                AttributeName: end_date
+                KeyType: RANGE
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
-            TableName: ${self:custom.service.tables.AirbnbManagerBookings}
+            TableName: ${self:custom.service.tables.Bookings}
 functions:
+  test: ${self:custom.service.functions.test}
   db_create: ${self:custom.service.functions.db_create}
   db_get:
     handler: src/handlers/db/get.get
     events: ${self:custom.service.functions.events.db_get}
-  db_update:
-    handler: src/handlers/db/update.update
-    events: ${self:custom.service.functions.events.db_update}
+  db_update: ${self:custom.service.functions.db_update}
   http_request: ${self:custom.service.functions.http_request}
   airbnb_fetch_token:
     handler: src/handlers/airbnb/token/fetch.fetch
@@ -143,10 +148,13 @@ functions:
       handler: src/handlers/airbnb/token/update.update
   airbnb_send_message: ${self:custom.service.functions.airbnb_send_message}
   airbnb_get_message: ${self:custom.service.functions.airbnb_get_message}
+  airbnb_list_message: ${self:custom.service.functions.airbnb_list_message}
   airbnb_get_booking: ${self:custom.service.functions.airbnb_get_booking}
-  airbnb_schedule_checkup: ${self:custom.service.functions.airbnb_schedule_checkup}
   airbnb_schedule_greeting: ${self:custom.service.functions.airbnb_schedule_greeting}
+  schedule_before_checkout: ${self:custom.service.functions.schedule_before_checkout}
   schedule_save_new_bookings: ${self:custom.service.functions.schedule_save_new_bookings}
+  schedule_before_checkin: ${self:custom.service.functions.schedule_before_checkin}
+  airbnb_get_calendar: ${self:custom.service.functions.airbnb_get_calendar}
 
 
 #    The following are a few example events you can configure

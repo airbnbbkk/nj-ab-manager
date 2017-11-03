@@ -7,21 +7,18 @@ import { Time } from '../../util/time';
 const save: Handler = async (_event: any,
                              _context: Context,
                              callback: Callback) => {
-
-    const lambdaUtil = new LambdaUtil();
+    console.log('start!');
+    const lambdaUtil = LambdaUtil.Singleton;
     const dynamodb = Dynamodb.Singleton;
-
-    //const bookingUtil = new BookingUtil();
-    const time = new Time();
+    const time = Time.Singleton;
 
     const today = new Date();
     const todayDate = time.format(today, 'YYYY-MM-DD');
-    const todayTime = today.getTime();
     const options = {
         body: {
-            _limit: 7,
+            _limit: 100,
             start_date: todayDate,
-            end_date: time.format((todayTime + (UNIX_TIME.DAY * 3)), 'YYYY-MM-DD')
+            end_date: time.format(time.endOfMonth(time.now()), 'YYYY-MM-DD')
         }
     };
 
@@ -30,6 +27,8 @@ const save: Handler = async (_event: any,
         InvocationType: 'RequestResponse',
         Payload: JSON.stringify(options)
     };
+
+    console.log('try!');
 
     try {
         const res = await lambdaUtil.invoke(getBookingParams);

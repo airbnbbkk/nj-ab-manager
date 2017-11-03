@@ -6,7 +6,7 @@ export class Singleton {
 
     static get Singleton() {
         if (this._instance === null || this._instance === undefined) {
-            console.log('creating a new instance', this.name);
+            console.log('creating a new instance of ', this.name);
             this._instance = new this();
         }
 

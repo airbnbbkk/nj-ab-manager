@@ -4,7 +4,7 @@ import { Stage, Tables } from '../../../constants';
 import { LambdaUtil } from '../../../util/lambda';
 
 const lambda = new Lambda();
-const lambdaUtil = new LambdaUtil();
+const lambdaUtil = LambdaUtil.Singleton;
 
 const update: Handler = async (event: any, _context: Context, callback: Callback) => {
     console.log(event, _context);

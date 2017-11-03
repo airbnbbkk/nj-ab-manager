@@ -73,14 +73,14 @@ export const Tables = {
         THREADCOUNTS: 'AirbnbManagerThreadCounts-dev',
         RESPONSES: 'AirbnbManagerResponses-dev',
         RESERVATIONS: 'AirbnbManagerReservations-dev',
-        BOOKINGS: 'AirbnbManagerBookings-dev'
+        BOOKINGS: 'Bookings-dev'
     },
     prod: {
         TOKEN: 'AirbnbManagerToken',
         THREADCOUNTS: 'AirbnbManagerThreadCounts',
         RESPONSES: 'AirbnbManagerResponses',
         RESERVATIONS: 'AirbnbManagerReservations',
-        BOOKINGS: 'AirbnbManagerBookings'
+        BOOKINGS: 'Bookings'
     }
 
 } as { [key: string]: any };

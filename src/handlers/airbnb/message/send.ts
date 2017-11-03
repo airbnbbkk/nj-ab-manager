@@ -2,7 +2,7 @@ import { APIGatewayEvent, Context, ProxyCallback, ProxyHandler } from 'aws-lambd
 import { AIRBNB_API, Stage } from '../../../constants';
 import { LambdaUtil } from '../../../util/lambda';
 
-const lambdaUtil = new LambdaUtil();
+const lambdaUtil = LambdaUtil.Singleton;
 
 const send: ProxyHandler = async (event: APIGatewayEvent,
                                   _context: Context,

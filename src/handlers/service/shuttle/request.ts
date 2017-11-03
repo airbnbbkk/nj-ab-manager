@@ -2,7 +2,7 @@ import { Context, ProxyCallback, ProxyHandler, ProxyResult } from 'aws-lambda';
 import { Airbnb } from '../../../airbnb/airbnb';
 import { ACCOUNT, AIRBNB_API } from '../../../constants';
 
-const airbnb = new Airbnb();
+const airbnb = Airbnb.Singleton;
 
 const request: ProxyHandler = async (event: any,
                                      _context: Context,

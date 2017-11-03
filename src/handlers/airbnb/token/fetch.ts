@@ -5,7 +5,7 @@ import { LambdaUtil } from '../../../util/lambda';
 
 const fetch: Handler = (_event: any, _context: Context, callback: Callback) => {
     const lambda = new Lambda();
-    const lambdaUtil = new LambdaUtil();
+    const lambdaUtil = LambdaUtil.Singleton;
 
     const body = {
         username: 'stardom8387@gmail.com',
