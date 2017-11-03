@@ -45,7 +45,7 @@ export class Message extends Singleton {
 
         threadIdList.forEach(async (threadId: number) => {
             const messageLang = await this.checkMessageLang(threadId);
-            this.sendMessage(276569855, this._getBeforeCheckInMessage(messageLang));
+            this.sendMessage(threadId, this._getBeforeCheckInMessage(messageLang));
         });
     }
 
@@ -59,7 +59,7 @@ export class Message extends Singleton {
 
         threadIdList.forEach(async (threadId: number) => {
             const messageLang = await this.checkMessageLang(threadId);
-            this.sendMessage(276569855, this._getBeforeCheckOutMessage(messageLang));
+            this.sendMessage(threadId, this._getBeforeCheckOutMessage(messageLang));
         });
     }
 
