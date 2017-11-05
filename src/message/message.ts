@@ -33,7 +33,7 @@ export class Message extends Singleton {
 
         const res = await lambdaUtil.invoke(getThreadParam);
 
-        return this.findLanguage(JSON.parse(res.body).thread.message_snippet.slice(10));
+        return this.findLanguage(JSON.parse(res.body).thread.message_snippet);
 
     }
 
