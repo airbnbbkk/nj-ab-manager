@@ -1,11 +1,10 @@
-import { Airbnb } from '../airbnb/airbnb.d';
 import { Dynamodb } from '../db/dynamodb';
 import { DB } from '../db/dynamodb.d';
 
 export class BookingUtil {
     private dynamoDb = Dynamodb.Singleton;
 
-    public convertToDbInput(bookings: Airbnb.Booking[]): DB.Bookings.PutItemInput[] {
+    public convertToDbInput(bookings: AirbnbType.Booking[]): DB.Bookings.PutItemInput[] {
         const bookingDbInputKeyList = [
             'confirmation_code=id',
             'guest.id',
@@ -18,7 +17,6 @@ export class BookingUtil {
         ];
 
         const dbInputList = this.dynamoDb.createBatchWriteParam(bookings, bookingDbInputKeyList);
-
 
         return dbInputList;
     }

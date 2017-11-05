@@ -12,7 +12,7 @@ const save: Handler = async (_event: any,
     const dynamodb = Dynamodb.Singleton;
     const time = Time.Singleton;
 
-    const today = new Date();
+    const today = time.now();
     const todayDate = time.format(today, 'YYYY-MM-DD');
     const options = {
         body: {

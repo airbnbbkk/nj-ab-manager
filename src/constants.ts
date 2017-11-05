@@ -1,4 +1,4 @@
-export const Stage = process.env.OPT_STAGE;
+export const Stage = process.env.OPT_STAGE as string;
 
 export const enum MESSAGE_STATUS {
     ACCEPTED,
@@ -43,6 +43,13 @@ export const ACCOUNT = {
     ID: 'stardom8387@gmail.com',
     PW: 'Stardom84!',
     HOST_ID: 45188796
+};
+
+export const S3_BUCKET: Dict = {
+    NAME: {
+        dev: 'airbnb-manager-dev-serverlessdeploymentbucket-ee1rvm7afu76',
+        prod: 'airbnb-manager-prod-serverlessdeploymentbucket-1od2xmlstig6r'
+    }
 };
 
 export const LANGUAGE_UNICODE_REGEX: object = {

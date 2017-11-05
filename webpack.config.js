@@ -4,22 +4,30 @@ const path = require('path');
 
 module.exports = {
     entry: slsw.lib.entries,
-    target: 'node',
-    externals: [nodeExternals(), 'aws-sdk'],
+    resolve: {
+        extensions: [
+            '.js',
+            '.json',
+            '.ts',
+            '.tsx'
+        ]
+    },
     output: {
         libraryTarget: 'commonjs',
         path: path.join(__dirname, 'dist'),
-        filename: '[name].js' // this should match the first part of function handler in serverless.yml
+        filename: '[name].js'
     },
+    target: 'node',
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.ts(x?)$/,
-                loader: 'ts-loader'
+                use: [
+                    {
+                        loader: 'ts-loader'
+                    }
+                ],
             }
         ]
-    },
-    resolve: {
-        extensions: ['.ts', '.js', '.json']
     }
 };

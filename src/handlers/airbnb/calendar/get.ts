@@ -1,4 +1,4 @@
-import { Context, ProxyCallback, ProxyHandler, ProxyResult } from 'aws-lambda';
+import { Context, ProxyCallback, ProxyHandler } from 'aws-lambda';
 import { Airbnb } from '../../../airbnb/airbnb';
 import { AIRBNB_API } from '../../../constants';
 
@@ -7,6 +7,9 @@ const airbnb = Airbnb.Singleton;
 const get: ProxyHandler = async (event: any,
                                  _context: Context,
                                  callback: ProxyCallback) => {
+
+    const reqData = event.data as Dict || {};
+
     const qs = {
         'currency': 'THB',
         'locale': 'en',
@@ -21,22 +24,9 @@ const get: ProxyHandler = async (event: any,
         'filter': 'all'
     };
 
-    if (event.body.data) {
-        Object.assign(qs, event.body.data);
-    }
+    Object.assign(qs, reqData);
 
-    const resBody = await airbnb.request('GET', AIRBNB_API.ENDPOINTS.MULTI_CALENDAR, qs);
-
-    const result = {
-        statusCode: (resBody as any).error_code || 200,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        body: (resBody as ProxyResult).body
-    };
-
-    callback(null, result);
+    callback(null, await airbnb.request('GET', AIRBNB_API.ENDPOINTS.MULTI_CALENDAR, qs));
 };
 
 export { get };

@@ -1,4 +1,4 @@
-import { Context, ProxyCallback, ProxyHandler, ProxyResult } from 'aws-lambda';
+import { Context, ProxyCallback, ProxyHandler } from 'aws-lambda';
 import { Airbnb } from '../../../airbnb/airbnb';
 import { ACCOUNT, AIRBNB_API } from '../../../constants';
 
@@ -8,9 +8,9 @@ const request: ProxyHandler = async (event: any,
                                      _context: Context,
                                      callback: ProxyCallback) => {
 
-    const reqData = event.body || {};
+    const reqData = event.data || {};
 
-    const qs = {
+    const qs = Object.assign({
         _format: 'for_creation',
         initiator_id: ACCOUNT.HOST_ID,
         receiver_id: 156193827,
@@ -20,22 +20,9 @@ const request: ProxyHandler = async (event: any,
         beneficiary_id: ACCOUNT.HOST_ID,
         version: 2,
         request_source: 'Resolution Center'
-    };
+    }, reqData);
 
-    Object.assign(qs, reqData);
-
-    const resBody = await airbnb.request('POST', AIRBNB_API.ENDPOINTS.THREADS_PATH, qs);
-
-    const result = {
-        statusCode: (resBody as any).error_code || 200,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        body: (resBody as ProxyResult).body
-    };
-
-    callback(null, result);
+    callback(null, await airbnb.request('POST', AIRBNB_API.ENDPOINTS.THREADS_PATH, qs));
 };
 
 export { request };

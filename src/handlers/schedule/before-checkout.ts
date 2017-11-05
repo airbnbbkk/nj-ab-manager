@@ -3,14 +3,13 @@ import { Message } from '../../message/message';
 import { LambdaUtil } from '../../util/lambda';
 import { Time } from '../../util/time';
 
-const message = Message.Singleton;
-const time = Time.Singleton;
-
-const today = time.now();
-
 const sendMessage: Handler = async (_event: any,
                                     _context: Context,
                                     callback: Callback) => {
+    const message = Message.Singleton;
+    const time = Time.Singleton;
+
+    const today = time.toLocalTime(time.now());
 
     const lambdaUtil = LambdaUtil.Singleton;
 

@@ -8,7 +8,11 @@ export class Time extends Singleton {
     private _endOfMonth = require('../../node_modules/date-fns/end_of_month');
 
     public now() {
-        return this._addHours(new Date(), 7);
+        return new Date();
+    }
+
+    public toLocalTime(date: Date) {
+        return this._addHours(date, 7);
     }
 
     public addDays(date: Date, days: number) {

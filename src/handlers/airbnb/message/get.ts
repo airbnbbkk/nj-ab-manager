@@ -1,8 +1,9 @@
-import { Callback, Context, Handler, ProxyResult } from 'aws-lambda';
+import { Callback, Context, Handler } from 'aws-lambda';
 import { Airbnb } from '../../../airbnb/airbnb';
 import { AIRBNB_API } from '../../../constants';
 
 const airbnb = Airbnb.Singleton;
+
 const qs = {
     role: 'reservations',
     _format: 'for_web_inbox',
@@ -20,32 +21,22 @@ const list: Handler = async (event: any,
                              _context: Context,
                              callback: Callback) => {
 
-    if (event.queryStringParameters) {
-        Object.assign(qs, event.queryStringParameters);
-    }
+    const reqData = event.data || {};
 
-    const resBody = await airbnb.request('GET', AIRBNB_API.ENDPOINTS.THREADS_PATH, qs);
+    Object.assign(qs, reqData);
 
-    const result = {
-        statusCode: (resBody as any).error_code || 200,
-        body: (resBody as ProxyResult).body
-    };
-
-    callback(null, result);
+    callback(null, await airbnb.request('GET', AIRBNB_API.ENDPOINTS.THREADS_PATH, qs));
 };
 
 const get: Handler = async (event: any,
                             _context: Context,
                             callback: Callback) => {
 
-    const resBody = await airbnb.request('GET', AIRBNB_API.ENDPOINTS.THREADS_PATH + `/${event.body.thread_id}`, qs);
+    const reqData = event.data || {};
 
-    const result = {
-        statusCode: (resBody as any).error_code || 200,
-        body: (resBody as ProxyResult).body
-    };
+    Object.assign(qs, reqData);
 
-    callback(null, result);
+    callback(null, await airbnb.request('GET', AIRBNB_API.ENDPOINTS.THREADS_PATH + `/${event.body.thread_id}`, qs));
 
 };
 

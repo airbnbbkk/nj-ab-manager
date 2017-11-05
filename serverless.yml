@@ -34,6 +34,7 @@ provider:
        Action:
          - "lambda:*"
          - "dynamodb:*"
+         - "s3:*"
        Resource: '*'
 
 custom:
@@ -131,12 +132,11 @@ resources:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
             TableName: ${self:custom.service.tables.Bookings}
+
 functions:
   test: ${self:custom.service.functions.test}
+  db_get: ${self:custom.service.functions.db_get}
   db_create: ${self:custom.service.functions.db_create}
-  db_get:
-    handler: src/handlers/db/get.get
-    events: ${self:custom.service.functions.events.db_get}
   db_update: ${self:custom.service.functions.db_update}
   http_request: ${self:custom.service.functions.http_request}
   airbnb_fetch_token:

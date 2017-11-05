@@ -1,57 +1,64 @@
-import { AIRBNB_API, Stage } from '../constants';
+import { ProxyResult } from 'aws-lambda';
+import { AWSError } from 'aws-sdk/lib/error';
+import { AIRBNB_API } from '../constants';
+import { S3Storage } from '../s3/s3-storage';
 import { Singleton } from '../singleton/singleton';
 import { LambdaUtil } from '../util/lambda';
 
 const lambdaUtil = LambdaUtil.Singleton;
 
 class Airbnb extends Singleton {
-    public async request(method: string, path: string, body: object) {
+    public async request(param: AirbnbType.AirbnbRequestParam) {
         const token = await this._getToken();
-
         const options = {
-            method,
+            method: param.method,
             host: AIRBNB_API.ENDPOINTS.HOST,
-            path,
+            path: param.path,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Airbnb-API-Key': 'd306zoyjsyarp7ifhu67rjxn52tv0t20',
+                'X-Airbnb-API-Key': AIRBNB_API.KEY,
                 'X-Airbnb-OAuth-Token': token
             },
-            body
+            body: param.data
         };
 
-        if (method === 'GET') {
-            options.path = options.path + this.jsonToQueryString(body);
+        const response = {
+            statusCode: 200,
+            body: ''
+        };
+
+        if (param.method === 'GET') {
+            options.path = options.path + this.jsonToQueryString(param.data);
         }
 
-        const params = {
-            FunctionName: `airbnb-manager-${Stage}-http_request`,
-            InvocationType: 'RequestResponse',
-            Payload: JSON.stringify(options)
-        };
+        const params = lambdaUtil.getInvocationRequestParam(
+            'http_request',
+            'RequestResponse',
+            options
+        );
 
-        console.log('sending Airbnb request', params);
+        console.log('Sending Airbnb request', params);
 
-        const res = await lambdaUtil.invoke(params);
+        try {
+            const res = await lambdaUtil.invoke(params);
+            response.statusCode = (res as AWSError).statusCode || response.statusCode;
+            response.body = (res as ProxyResult).body;
+        } catch (e) {
+            console.error('Failed in sending Airbnb request', e);
+            response.body = JSON.stringify(e, null, 2);
+        }
 
-        return res;
-
+        return response;
     }
 
     private async _getToken() {
-        const params = {
-            FunctionName: `airbnb-manager-${Stage}-airbnb_get_token`,
-            InvocationType: 'RequestResponse',
-            Payload: ''
-        };
+        const s3Storage = S3Storage.Singleton;
 
-        const tokenRes = await lambdaUtil.invoke(params);
-
-        return tokenRes.body;
+        return s3Storage.getValue('token');
     }
 
-    private jsonToQueryString(json: any) {
+    private jsonToQueryString(json: Dict) {
         return '?' +
             Object.keys(json).map(key => {
                 return encodeURIComponent(key.replace(/ /g, '')) + '=' +

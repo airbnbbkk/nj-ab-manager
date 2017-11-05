@@ -1,5 +1,11 @@
-export namespace Airbnb {
-    type Booking = {
+declare namespace AirbnbType {
+    interface AirbnbRequestParam {
+        method: string;
+        path: string;
+        data: Dict;
+    }
+
+    interface Booking {
         confirmation_code: string;
         guest: {
             email: string;
@@ -21,6 +27,6 @@ export namespace Airbnb {
         number_of_guests: number;
         recently_accepted: boolean;
         start_date: string;
-        thread_id: number
+        thread_id: number;
     }
 }
