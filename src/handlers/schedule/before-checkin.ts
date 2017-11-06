@@ -35,7 +35,7 @@ const beforeCheckin: Handler = async (_event: any,
         callback(null, {body: `sent a sending message request: ${threadIdList}`});
 
     } catch (err) {
-        console.error(err);
+        console.error('Error', err);
         callback(null, {body: `failed a sending message request: ${err}`});
     }
 };

@@ -33,11 +33,11 @@ class LambdaUtil extends Singleton {
                 if (params.InvocationType === 'RequestResponse') {
                     response = this.convertInvocationResToLambdaProxyRes(res);
                 }
-                console.log('Lambda invoked successfully', response);
+                console.log(`Lambda ${params.FunctionName} invoked successfully`, response);
                 return response;
             })
             .catch(err => {
-                console.error('Failed to invoke Lambda', err);
+                console.error(`Failed to invoke Lambda ${params.FunctionName}`, err);
                 throw Error(err);
             });
     }
