@@ -138,8 +138,7 @@ export class Message extends Singleton {
             '\n' +
             'Feel free to ask any question anytime.\n' +
             '\n' +
-            'Thank you and have a safe trip to Bangkok ;)\n' +
-            '\n,',
+            'Thank you and have a safe trip to Bangkok!\n',
             ko: '안녕하세요, 내일 체크인 하시는 군요!\n' +
             '\n' +
             '도착하시기 전에 제가 보내드린 게스트 페이지에서 체크인 하는 방법을 꼭 확인해 주시구요, 숙박에 필요한 다른 내용들도 게스트 페이지에 있으니 꼭 확인 부탁드립니다.\n' +
