@@ -6,13 +6,16 @@ export class S3Storage extends Singleton {
     private readonly _s3 = new S3();
     private _cache: Dict = {};
 
-    public putValue(key: string, value: string) {
+    public async putValue(key: string, value: string) {
+        console.log(`putting s3 variable key: ${key} with the value: ${value}`);
         const params = {
             Body: value,
             Bucket: S3_BUCKET.NAME[Stage],
             Key: key
         };
-        this._s3.putObject(params).promise().then().catch(err => {
+        this._s3.putObject(params).promise().then((res) => {
+            console.log(`s3 variable has put successfully`, res);
+        }).catch(err => {
             throw Error(err);
         });
     }
@@ -32,7 +35,7 @@ export class S3Storage extends Singleton {
             .then(data => {
                 const result = data.Body.toString();
                 this._cache[key] = result;
-                console.log('s3 object retrieved', result);
+                console.log(`s3 object '${key}' retrieved`, result);
                 return result;
             })
             .catch(err => {

@@ -1,6 +1,6 @@
 import { Callback, Context, Handler } from 'aws-lambda';
+import { Calendar } from '../../calendar/calendar';
 import { Message } from '../../message/message';
-import { LambdaUtil } from '../../util/lambda';
 import { Time } from '../../util/time';
 
 const sendMessage: Handler = async (_event: any,
@@ -8,31 +8,22 @@ const sendMessage: Handler = async (_event: any,
                                     callback: Callback) => {
     const message = Message.Singleton;
     const time = Time.Singleton;
-
     const today = time.toLocalTime(time.now());
-
-    const lambdaUtil = LambdaUtil.Singleton;
+    const calendar = Calendar.Singleton;
 
     console.log('today', today);
 
     const options = {
-        data: {
-            _limit: 7,
-            start_date: time.format(today, 'YYYY-MM-DD'),
-            end_date: time.format(today, 'YYYY-MM-DD')
-        }
+        start_date: time.format(today, 'YYYY-MM-DD'),
+        end_date: time.format(today, 'YYYY-MM-DD')
     };
 
-    const getBookingParams = lambdaUtil.getInvocationRequestParam(
-        'airbnb_get_calendar',
-        'RequestResponse',
-        options);
-
     try {
-        const res = await lambdaUtil.invoke(getBookingParams);
+
+        const res = await calendar.get(options);
         const calendars = JSON.parse(res.body).calendars;
 
-        console.log('bookings', JSON.stringify(calendars));
+        // console.log('bookings', JSON.stringify(calendars));
 
         const threadIdList = await message.messageBeforeCheckOut(calendars);
 

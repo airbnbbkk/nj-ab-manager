@@ -6,6 +6,7 @@ export class Time extends Singleton {
     private _startOfDay = require('../../node_modules/date-fns/start_of_day');
     private _dateFormat = require('../../node_modules/date-fns/format');
     private _endOfMonth = require('../../node_modules/date-fns/end_of_month');
+    private _differenceInDays = require('../../node_modules/date-fns/difference_in_calendar_days');
 
     public now() {
         return new Date();
@@ -33,6 +34,10 @@ export class Time extends Singleton {
 
     public endOfMonth(date: Date) {
         return this._endOfMonth(date);
+    }
+
+    public differenceInDays(earlier: Date, later: Date) {
+        return this._differenceInDays(earlier, later);
     }
 
 }

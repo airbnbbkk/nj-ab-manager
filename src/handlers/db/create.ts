@@ -1,7 +1,6 @@
 import { Handler } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/lib/dynamodb/document_client';
 import { AWSError } from 'aws-sdk/lib/error';
-import * as uuidv1 from 'uuid/v1';
 import { Dynamodb } from '../../db/dynamodb';
 import BatchWriteItemInput = DocumentClient.BatchWriteItemInput;
 import PutItemInput = DocumentClient.PutItemInput;
@@ -14,8 +13,6 @@ const create: Handler = async (event, _context, callback) => {
     let params: any;
     let dbWriter: (params: PutItemInput | BatchWriteItemInput) =>
         Promise<DocumentClient.PutItemOutput | DocumentClient.BatchWriteItemOutput | AWSError>;
-
-    const timestamp = new Date().getTime();
 
     if (typeof event.body === 'string') {
         body = JSON.parse(event.body);
@@ -32,17 +29,9 @@ const create: Handler = async (event, _context, callback) => {
         };
     } else {
         dbWriter = dynamoDb.put.bind(dynamoDb);
-        const item: any = {
-            id: body.id || uuidv1(),
-            created_at: timestamp,
-            updated_at: timestamp
-        };
-
-        Object.assign(item, body.data);
-
         params = {
             TableName: body.table,
-            Item: item
+            Item: body.data
         };
     }
 

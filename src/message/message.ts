@@ -1,37 +1,71 @@
-import { UNIX_TIME } from '../constants';
+import { Airbnb } from '../airbnb/airbnb';
+import { AIRBNB_API } from '../constants';
 import { Singleton } from '../singleton/singleton';
-import { LambdaUtil } from '../util/lambda';
 import { Time } from '../util/time';
 
+const airbnb = Airbnb.Singleton;
 const time = Time.Singleton;
-const lambdaUtil = LambdaUtil.Singleton;
 
 export class Message extends Singleton {
 
-    public sendMessage(threadIds: number | number[], message: string) {
+    public send(threadIds: number | number[], msg: string) {
 
-        const sendMessageParams = lambdaUtil.getInvocationRequestParam(
-            `airbnb_send_message`,
-            'Event',
-            {
-                thread_id: threadIds,
-                message
-            }
-        );
+        if (threadIds.constructor.name !== 'Array') {
+            airbnb.request({
+                method: 'POST',
+                path: AIRBNB_API.ENDPOINTS.MESSAGE_PATH,
+                data: {
+                    thread_id: threadIds,
+                    message: msg
+                }
+            });
 
-        lambdaUtil.invoke(sendMessageParams);
+        } else if (threadIds.constructor.name === 'Array') {
+            (threadIds as number[]).forEach(async (threadId) => {
+                const reqBody = {
+                    thread_id: threadId,
+                    message: msg
+                };
+                airbnb.request({
+                    method: 'POST',
+                    path: AIRBNB_API.ENDPOINTS.MESSAGE_PATH,
+                    data: reqBody
+                });
+            });
+        }
+    }
+
+    public async get(threadId?: number, option: Dict = {}) {
+        const qs = Object.assign({
+            role: 'reservations',
+            _format: 'for_web_inbox',
+            _offset: 0,
+            _limit: 5,
+            locale: 'en',
+            currency: 'thb',
+            selected_inbox_type: 'host',
+            include_mt: true,
+            include_help_threads: true,
+            include_support_messaging_threads: true
+        }, option);
+
+        const param = {
+            method: 'GET',
+            path: `${AIRBNB_API.ENDPOINTS.THREADS_PATH}${threadId ? '/' + threadId : ''}`,
+            data: qs
+        };
+
+        if (threadId) {
+            console.log('Getting a single message', param);
+        } else {
+            console.log('Getting messages', param);
+        }
+
+        return await airbnb.request(param);
     }
 
     public async checkMessageLang(threadId: number) {
-        const getThreadParam = lambdaUtil.getInvocationRequestParam(
-            `airbnb_get_message`,
-            'RequestResponse',
-            {
-                thread_id: threadId
-            }
-        );
-
-        const res = await lambdaUtil.invoke(getThreadParam);
+        const res = await this.get(threadId);
 
         return this.findLanguage(JSON.parse(res.body).thread.message_snippet);
 
@@ -45,7 +79,7 @@ export class Message extends Singleton {
 
         threadIdList.forEach(async (threadId: number) => {
             const messageLang = await this.checkMessageLang(threadId);
-            this.sendMessage(threadId, this._getBeforeCheckInMessage(messageLang));
+            this.send(threadId, this._getBeforeCheckInMessage(messageLang));
         });
     }
 
@@ -59,7 +93,7 @@ export class Message extends Singleton {
 
         threadIdList.forEach(async (threadId: number) => {
             const messageLang = await this.checkMessageLang(threadId);
-            this.sendMessage(threadId, this._getBeforeCheckOutMessage(messageLang));
+            this.send(threadId, this._getBeforeCheckOutMessage(messageLang));
         });
     }
 
@@ -108,17 +142,17 @@ export class Message extends Singleton {
     }
 
     private _getDaysLeftToCheckIn(calendar: any) {
-        const todayTime = time.startOfDay(time.toLocalTime(time.now())).getTime();
-        const checkInTime = new Date(calendar.days[0].reservation.start_date).getTime();
-        const daysLeft = (checkInTime - todayTime) / UNIX_TIME.DAY;
+        const todayDate = time.startOfDay(time.toLocalTime(time.now())).getTime();
+        const checkInDate = new Date(calendar.days[0].reservation.start_date).getTime();
+        const daysLeft = time.differenceInDays(checkInDate, todayDate);
 
         return daysLeft;
     }
 
     private _getDaysLeftToCheckOut(calendar: any) {
-        const todayTime = time.startOfDay(time.toLocalTime(time.now())).getTime();
-        const checkInTime = new Date(calendar.days[0].reservation.start_date).getTime();
-        const daysStayed = (todayTime - checkInTime) / UNIX_TIME.DAY;
+        const todayDate = time.startOfDay(time.toLocalTime(time.now()));
+        const checkInDate = new Date(calendar.days[0].reservation.start_date).getTime();
+        const daysStayed = time.differenceInDays(todayDate, checkInDate);
 
         return calendar.days[0].reservation.nights - daysStayed;
     };

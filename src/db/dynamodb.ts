@@ -19,20 +19,15 @@ export class Dynamodb extends Singleton {
     }
 
     public put(params: any) {
-        /*const params = {
-            TableName: table,
-            Item: {
-                "year": year,
-                "title": title,
-                "info": {
-                    "plot": "Nothing happens at all.",
-                    "rating": 0
-                }
-            }
-        };*/
-
         console.log('Adding a new item...', params);
-        return this._db.put(params).promise()
+        const timestamp = new Date().getTime();
+        const item = Object.assign({
+            id: params.id || uuidv1(),
+            created_at: timestamp,
+            updated_at: timestamp
+        }, params);
+
+        return this._db.put(item).promise()
             .then((data: PutItemOutput) => {
                 console.log('Added an item:', data, JSON.stringify(data, null));
                 return data;

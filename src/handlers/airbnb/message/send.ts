@@ -1,31 +1,18 @@
 import { APIGatewayEvent, Context, ProxyCallback, ProxyHandler } from 'aws-lambda';
-import { Airbnb } from '../../../airbnb/airbnb';
-import { AIRBNB_API } from '../../../constants';
+import { Message } from '../../../message/message';
 
-const airbnb = Airbnb.Singleton;
 export const send: ProxyHandler = async (event: APIGatewayEvent,
                                          _context: Context,
                                          callback: ProxyCallback) => {
-    let response: any;
+    const message = Message.Singleton;
 
     console.log('event', event);
 
     const reqBody = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
 
-    if (typeof reqBody.thread_id !== 'object') {
-        await _sendRequest(reqBody);
+    message.send(reqBody.thread_id, reqBody.message);
 
-    } else {
-        reqBody.thread_id.forEach(async (threadId: string) => {
-            const newReqBody = {
-                thread_id: threadId,
-                message: reqBody.message
-            };
-            await _sendRequest(newReqBody);
-        });
-    }
-
-    response = {
+    const response = {
         statusCode: 200,
         headers: {
             'Content-Type': 'application/json',
@@ -36,16 +23,3 @@ export const send: ProxyHandler = async (event: APIGatewayEvent,
 
     callback(null, response);
 };
-
-const _sendRequest = async (reqBody: any) => {
-    const options = {
-        method: 'POST',
-        host: AIRBNB_API.ENDPOINTS.HOST,
-        path: AIRBNB_API.ENDPOINTS.MESSAGE_PATH,
-        body: reqBody
-    };
-
-    airbnb.request(options);
-};
-
-export = send;

@@ -96,21 +96,6 @@ custom:
 
 resources:
   Resources:
-    AirbnbManagerToken:
-      Type: 'AWS::DynamoDB::Table'
-      Properties:
-        AttributeDefinitions:
-          -
-            AttributeName: id
-            AttributeType: S
-        KeySchema:
-          -
-            AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        TableName: ${self:custom.service.tables.AirbnbManagerToken}
     Bookings:
           Type: 'AWS::DynamoDB::Table'
           Properties:
@@ -138,14 +123,6 @@ functions:
   db_get: ${self:custom.service.functions.db_get}
   db_create: ${self:custom.service.functions.db_create}
   db_update: ${self:custom.service.functions.db_update}
-  http_request: ${self:custom.service.functions.http_request}
-  airbnb_fetch_token:
-    handler: src/handlers/airbnb/token/fetch.fetch
-  airbnb_get_token:
-      handler: src/handlers/airbnb/token/get.get
-      events: ${self:custom.service.functions.events.airbnb_get_token}
-  airbnb_update_token:
-      handler: src/handlers/airbnb/token/update.update
   airbnb_send_message: ${self:custom.service.functions.airbnb_send_message}
   airbnb_get_message: ${self:custom.service.functions.airbnb_get_message}
   airbnb_list_message: ${self:custom.service.functions.airbnb_list_message}

@@ -3,8 +3,6 @@ import { Singleton } from '../singleton/singleton';
 
 export class HttpRequest extends Singleton {
     public request(param: any) {
-        let response: Dict = {};
-
         const options = {
             method: param.method,
             hostname: param.host,
@@ -14,27 +12,25 @@ export class HttpRequest extends Singleton {
             body: JSON.stringify(param.body)
         };
 
-        console.log('request options', options);
+        console.log('Sending a http request: ', options);
 
-        rq(options)
+        return rq(options)
             .then((res: any) => {
-                console.log('http request response', res);
-                response = {
+                // console.log('Got a response from http request', res);
+                return {
                     headers: {'Content-Type': 'application/json'},
                     statusCode: 200,
                     body: res.body
                 };
             })
             .catch((err: any) => {
-                console.error('request error', err);
-                response = {
+                console.error('Http request error', err);
+                return {
                     headers: err.headers,
                     statusCode: err.statusCode,
                     body: err.body,
                     statusMessage: err.statusMessage
                 };
             });
-
-        return response;
-    };
+    }
 }
