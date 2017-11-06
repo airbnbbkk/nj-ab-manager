@@ -77,6 +77,8 @@ export class Message extends Singleton {
             .filter((calendar: any) => this._getDaysLeftToCheckIn(calendar) === 1)
             .map((calendar: any) => calendar.days[0].reservation.thread_id);
 
+        console.log('threadIdList', threadIdList);
+
         threadIdList.forEach(async (threadId: number) => {
             const messageLang = await this.checkMessageLang(threadId);
             this.send(threadId, this._getBeforeCheckInMessage(messageLang));
