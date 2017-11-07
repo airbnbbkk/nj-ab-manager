@@ -1,9 +1,11 @@
 const nodeExternals = require('webpack-node-externals');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const slsw = require('serverless-webpack');
 const path = require('path');
 
 module.exports = {
     entry: slsw.lib.entries,
+    externals: [nodeExternals(), 'aws-sdk'],
     resolve: {
         extensions: [
             '.js',
@@ -29,5 +31,8 @@ module.exports = {
                 ],
             }
         ]
-    }
+    },
+    plugins: [
+        new UglifyJSPlugin()
+    ]
 };

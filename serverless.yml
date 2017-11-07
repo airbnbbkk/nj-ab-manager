@@ -124,8 +124,6 @@ functions:
   db_create: ${self:custom.service.functions.db_create}
   db_update: ${self:custom.service.functions.db_update}
   airbnb_send_message: ${self:custom.service.functions.airbnb_send_message}
-  airbnb_get_message: ${self:custom.service.functions.airbnb_get_message}
-  airbnb_list_message: ${self:custom.service.functions.airbnb_list_message}
   airbnb_get_booking: ${self:custom.service.functions.airbnb_get_booking}
   airbnb_schedule_greeting: ${self:custom.service.functions.airbnb_schedule_greeting}
   schedule_before_checkout: ${self:custom.service.functions.schedule_before_checkout}

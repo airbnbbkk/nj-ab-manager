@@ -11,7 +11,7 @@ export class Message extends Singleton {
     public send(threadIds: number | number[], msg: string) {
 
         if (threadIds.constructor.name !== 'Array') {
-            airbnb.request({
+            return airbnb.request({
                 method: 'POST',
                 path: AIRBNB_API.ENDPOINTS.MESSAGE_PATH,
                 data: {
@@ -26,7 +26,7 @@ export class Message extends Singleton {
                     thread_id: threadId,
                     message: msg
                 };
-                airbnb.request({
+                return airbnb.request({
                     method: 'POST',
                     path: AIRBNB_API.ENDPOINTS.MESSAGE_PATH,
                     data: reqBody

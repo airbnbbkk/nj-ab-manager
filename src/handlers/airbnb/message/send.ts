@@ -10,15 +10,15 @@ export const send: ProxyHandler = async (event: APIGatewayEvent,
 
     const reqBody = typeof event.body === 'string' ? JSON.parse(event.body) : event.body;
 
-    message.send(reqBody.thread_id, reqBody.message);
+    const res = await message.send(reqBody.thread_id, reqBody.message);
 
     const response = {
-        statusCode: 200,
+        statusCode: res.statusCode,
         headers: {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*' // Required for CORS support to work
         },
-        body: 'sending messages has requested'
+        body: res.body
     };
 
     callback(null, response);
