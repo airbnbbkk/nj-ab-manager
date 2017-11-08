@@ -64,7 +64,8 @@ export class Dynamodb extends Singleton {
             });
     }
 
-    public update(params: any) {
+    public update(data: any) {
+        const params = this._createUpdateParam(data);
         console.log('Updating an item...', params);
         return this._db.update(params).promise()
             .then((data: PutItemOutput) => {
@@ -163,4 +164,22 @@ export class Dynamodb extends Singleton {
         });
         return param;
     }
+
+    private _createUpdateParam(data: any) {
+        const param = {
+            TableName: data.table,
+            Key: data.key,
+            ExpressionAttributeValues: {} as any,
+            UpdateExpression: 'SET',
+            /*UpdateExpression: 'SET #todo_text = :text, checked = :checked, updatedAt = :updatedAt',*/
+            ReturnValues: 'NONE'
+        };
+
+        Object.keys(data.data).forEach((key: string, i: number, arr: any[]) => {
+            param.ExpressionAttributeValues[`:${key}`] = data.data[key];
+            param.UpdateExpression += ` ${key} = :${key}${i !== (arr.length - 1) ? ',' : ''}`;
+        });
+
+        return param;
+    };
 }

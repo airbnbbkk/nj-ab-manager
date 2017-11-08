@@ -120,16 +120,11 @@ resources:
 
 functions:
   test: ${self:custom.service.functions.test}
-  db_get: ${self:custom.service.functions.db_get}
-  db_create: ${self:custom.service.functions.db_create}
-  db_update: ${self:custom.service.functions.db_update}
   airbnb_send_message: ${self:custom.service.functions.airbnb_send_message}
-  airbnb_get_booking: ${self:custom.service.functions.airbnb_get_booking}
   airbnb_schedule_greeting: ${self:custom.service.functions.airbnb_schedule_greeting}
   schedule_before_checkout: ${self:custom.service.functions.schedule_before_checkout}
   schedule_save_new_bookings: ${self:custom.service.functions.schedule_save_new_bookings}
   schedule_before_checkin: ${self:custom.service.functions.schedule_before_checkin}
-  airbnb_get_calendar: ${self:custom.service.functions.airbnb_get_calendar}
 
 
 #    The following are a few example events you can configure
