@@ -1,6 +1,6 @@
 import { Context, ProxyCallback, ProxyHandler } from 'aws-lambda';
-import { Airbnb } from '../../../airbnb/airbnb';
-import { ACCOUNT, AIRBNB_API } from '../../../constants';
+import { Airbnb } from '../airbnb/airbnb';
+import { ACCOUNT, AIRBNB_API } from '../constants';
 
 const airbnb = Airbnb.Singleton;
 
