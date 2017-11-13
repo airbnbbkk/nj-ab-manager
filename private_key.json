@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "airbnb-708dd",
+  "private_key_id": "709464adab29c8a21c36705998445f0b01f9a563",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDRUABf9MDzW5bg\ne+3BafcQvajqv2pIElKA3VS69LJMDDJJ1CvsKYYPbtvP288jIZ1ci4+qK8BQw+LH\nLnZzog9J5HJ4zZiQYUVf7IrLyj1r1I2YTwfKTh4hyPzd+agfaURb4QBLQOH/fcwH\nDj/SB+Y99r1mlwQ6zovjQQsA1Xgdc69KHBgwBiqDIyvLJsnIt3dkA/iS76zzCQwU\n6DGZJpDX2WvKd+ReRCiMygq2+Wy7RYlBr1D8rkEK8depOMvIPfSHwU8UscYH/J4E\nQfjLreyWF/KskIeLcDnn66uTKemhnYB87fPSQW+UyUXbD1lr6ByGPr4aVbP+Q02E\nD1Y02us1AgMBAAECggEAAJCDa77UfWOIGONkrQKc5rfoOnfZMMgR3mSaa6WozHE0\n+oN+udST1rtRDvK0EI9w5fS/ZrFXA7C/jhN3QNEVUvjxgRdm267TedKAvlN1jnKk\njh5ackZ7KNKqseuQM0N8qnXFIy7R3TdI41T7wZSBX7XoZVwvZ/wyHuMIRVCOEiBC\nPx7efRlSh0H6eX3HFpy7uC/6FLli3vmhUxd5/SGx5/nwB7C4uq6h0gMNI+bZ4tfZ\nDU01aJkaxBoULet2VRoKSNVe/jKGflM8ufhvC8vJ1/ZeOoTR8kALyMTiC3qSTfrV\nP09DWBuBY8SQ9WQMxQIbY7ZitZJQEib6O2rIPnbDEQKBgQDw2KNktPb1TU5RWYN8\nHriiOQj/l/2EIpfbQkplACAE3VRjFUaf5mAkTbHrPRBg/fjO9AWxpND+10/zajkH\nX5kbGMA287hubQnRwWJaPdKHQUdqH9pPdhjIRd+PrlsCxvwD0lfyKZOTj25UzayB\nXc26t3DMZR1OGlJVk+K29fHZxQKBgQDee3FNDfsbv2rJG3TXDo29vyd7xFFAjRdR\n0F6tqccgMFXz4hbzf7ILR5u0XVFGHgB6W8TWTJ7QNJTPm9obN/Ij2IKc6v7b/GEp\nYWtdC2GHup5JtY7NKf30+oSX7g3bjgehZK/avYlKyaxyYb3b9DYMnYYAQPTXo2sp\nVebd5L2SsQKBgQDmabtXmzEwWLb2aLa7xgBJYltTeysUgKvbHb5ihg4b2UrkR/R7\nAUE1Ogdez9qdkBu6kgXof49aXs6kRxksDq9BFxq898mYC0T7oRDg2IhS0Ybq5nJK\n1ua6ou5QXTPAonFzjoaIrHH9F5ksFGBWm1E4skp9oLa6g8AFEygwdXbdKQKBgQCz\nFkbDsedaFKFOtO0+V5a9EGwl8oc9INWOo94yiKGjRYVKxcmXxEh7T+8EJsHPYUMd\nO1Wc8xw7mLfYzimpE0W0mQm6amcwiV1kw+h6gzjE2vGjf6QtfgnQ8v9clOFOxGtb\n/QKZX0xuiRxpDkiYD2KakQpWlfMAyajvIxitsPzwYQKBgAYIeCN53enArd4Rtm3Q\nxBKVkQxZwpWL2F0fGxbZ2fItUAdnpzCoszL2vLZlEKXXFA8/W/R6//nL7/p4lqAh\nWnMjmQU4PH12onil/eIVMh92NOI/D6wuppDwq5iK7p/eQbIucDS9racCa/sBXkrg\njnOqxhXESoOWqvATljpfP22R\n-----END PRIVATE KEY-----\n",
+  "client_email": "gmail-79@airbnb-708dd.iam.gserviceaccount.com",
+  "client_id": "110920909313924724987",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/gmail-79%40airbnb-708dd.iam.gserviceaccount.com"
+}

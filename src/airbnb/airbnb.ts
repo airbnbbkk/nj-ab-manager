@@ -4,12 +4,13 @@ import { AIRBNB_API } from '../constants';
 import { HttpRequest } from '../http/request';
 import { S3Storage } from '../s3/s3-storage';
 import { Singleton } from '../singleton/singleton';
+import AirbnbResponse = AirbnbType.HttpResponse;
 
 class Airbnb extends Singleton {
     private _http = HttpRequest.Singleton;
     private _s3Stroage = S3Storage.Singleton;
 
-    public async request(param: AirbnbType.AirbnbRequestParam) {
+    public async request(param: AirbnbType.HttpRequestParam): Promise<AirbnbResponse> {
         let token = await this._getToken();
         const options = {
             method: param.method,
@@ -24,7 +25,7 @@ class Airbnb extends Singleton {
             body: param.data
         };
 
-        const response = {
+        const response: AirbnbResponse = {
             statusCode: 200,
             body: ''
         };
