@@ -7,9 +7,16 @@ export class Time extends Singleton {
     private _dateFormat = require('../../node_modules/date-fns/format');
     private _endOfMonth = require('../../node_modules/date-fns/end_of_month');
     private _differenceInDays = require('../../node_modules/date-fns/difference_in_calendar_days');
+    private _subMinutes = require('../../node_modules/date-fns/sub_minutes');
 
     public now() {
         return new Date();
+    }
+
+    public toEpoch(date: Date, returnNumber = false) {
+        const s = date.getTime().toString();
+        const r = s.substr(0, s.length - 3);
+        return returnNumber ? Number(r) : r;
     }
 
     public toLocalTime(date: Date) {
@@ -38,6 +45,10 @@ export class Time extends Singleton {
 
     public differenceInDays(earlier: Date, later: Date) {
         return this._differenceInDays(earlier, later);
+    }
+
+    public subMinutes(date: Date, minutes: number) {
+        return this._subMinutes(date, minutes);
     }
 
 }

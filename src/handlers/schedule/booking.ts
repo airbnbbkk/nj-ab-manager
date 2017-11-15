@@ -5,7 +5,7 @@ import { Message } from '../../message/message';
 import { LambdaUtil } from '../../util/lambda';
 import { Time } from '../../util/time';
 
-const greeting: Handler = async (_event: any,
+const newBooking: Handler = async (_event: any,
                                  _context: Context,
                                  callback: Callback) => {
 

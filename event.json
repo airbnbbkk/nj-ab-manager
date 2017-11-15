@@ -1,6 +1,6 @@
 {
   "body": {
-    "thread_id": 276569855123,
-    "message": "TEST"
+    "name": "getNewBookingEmails",
+    "param": 1440
   }
 }

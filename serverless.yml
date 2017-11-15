@@ -46,7 +46,8 @@ custom:
     prod: ${file(./config/serverless.prod.yml)}
   service: ${self:custom.env.${self:custom.stage}}
   stage: ${opt:stage, self:provider.stage}
-  # globalSchedule: rate(10 minutes)
+  config: ${file(./config/config.json)}
+  webpack: ./webpack.config.${self:custom.stage}.js
   webpackIncludeModules: 
     forceExclude:
           - aws-sdk
@@ -99,30 +100,7 @@ custom:
 #    - exclude-me.js
 #    - exclude-me-dir/**
 
-resources:
-  Resources:
-    Bookings:
-          Type: 'AWS::DynamoDB::Table'
-          Properties:
-            AttributeDefinitions:
-              -
-                AttributeName: id
-                AttributeType: S
-              -
-                AttributeName: end_date
-                AttributeType: N
-            KeySchema:
-              -
-                AttributeName: id
-                KeyType: HASH
-              -
-                AttributeName: end_date
-                KeyType: RANGE
-            ProvisionedThroughput:
-              ReadCapacityUnits: 1
-              WriteCapacityUnits: 1
-            TableName: ${self:custom.service.tables.Bookings}
-
+resources: ${self:custom.service.resources}
 functions:
   test: ${self:custom.service.functions.test}
   receive:
@@ -133,10 +111,10 @@ functions:
               method: post
               cors: true
   airbnb_send_message: ${self:custom.service.functions.airbnb_send_message}
-  airbnb_schedule_greeting: ${self:custom.service.functions.airbnb_schedule_greeting}
   schedule_before_checkout: ${self:custom.service.functions.schedule_before_checkout}
-  schedule_save_new_bookings: ${self:custom.service.functions.schedule_save_new_bookings}
+  schedule_new_booking: ${self:custom.service.functions.schedule_new_booking}
   schedule_before_checkin: ${self:custom.service.functions.schedule_before_checkin}
+  google_api_call: ${self:custom.service.functions.google_api_call}
 
 
 #    The following are a few example events you can configure

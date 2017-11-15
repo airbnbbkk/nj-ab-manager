@@ -6,5 +6,4 @@ jspm_packages
 .serverless
 /dist/
 /.idea/
-/config/
 /.serverless/

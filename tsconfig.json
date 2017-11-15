@@ -11,8 +11,10 @@
     "noLib": false,
     "importHelpers": false,
     "allowJs": true,
+    "sourceMap": true,
     "lib": [
       "dom",
+      "es2015",
       "es2016"
     ],
     "allowUnreachableCode": false,

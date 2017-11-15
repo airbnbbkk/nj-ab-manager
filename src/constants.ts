@@ -76,18 +76,10 @@ export const DOCUMENT_ERROR = {
 
 export const Tables = {
     dev: {
-        TOKEN: 'AirbnbManagerToken-dev',
-        THREADCOUNTS: 'AirbnbManagerThreadCounts-dev',
-        RESPONSES: 'AirbnbManagerResponses-dev',
-        RESERVATIONS: 'AirbnbManagerReservations-dev',
-        BOOKINGS: 'Bookings-dev'
+        BOOKINGS: 'Reservations-dev'
     },
     prod: {
-        TOKEN: 'AirbnbManagerToken',
-        THREADCOUNTS: 'AirbnbManagerThreadCounts',
-        RESPONSES: 'AirbnbManagerResponses',
-        RESERVATIONS: 'AirbnbManagerReservations',
-        BOOKINGS: 'Bookings'
+        BOOKINGS: 'Reservations'
     }
 
 } as { [key: string]: any };
@@ -141,10 +133,10 @@ export const HOUSE_INFO: { [code: number]: any } = {
     20777226: {
         code: 6,
         wifi: {
-            name: 'M & M Residence',
-            pw: '1234567890'
+            name: 'nui',
+            pw: '1234512345'
         },
-        doorlock: '4732*'
+        doorlock: '08036*'
     },
     21170179: {
         code: 7,

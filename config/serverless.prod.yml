@@ -1,0 +1,61 @@
+tables:
+  AirbnbManagerThreadCounts: AirbnbManagerThreadCounts
+  AirbnbManagerResponses: AirbnbManagerResponses
+  Booking: Bookings
+  AirbnbManagerTest: AirbnbManagerTest
+
+functions:
+  test:
+    handler: src/handlers/test.test
+  airbnb_send_message:
+    handler: src/handlers/airbnb/message/send.send
+    events:
+      - http:
+          path: message
+          method: post
+          cors: true
+  schedule_new_booking:
+    handler: src/handlers/schedule/new-booking.newBooking
+    events:
+      - schedule:
+          enabled: true
+          rate: cron(0/${self:custom.config.aws.schedule.schedule_new_booking.interval} * * * ? *)
+  schedule_before_checkout:
+    handler: src/handlers/schedule/before-checkout.sendMessage
+    events:
+      - schedule:
+          enabled: true
+          rate: cron(0 12 * * ? *)
+    timeout: 20
+  schedule_save_new_bookings:
+    handler: src/handlers/schedule/save.save
+  schedule_before_checkin:
+      handler: src/handlers/schedule/before-checkin.beforeCheckin
+      events:
+        - schedule:
+            enabled: true
+            rate: cron(0 1 * * ? *)
+      timeout: 20
+resources:
+  Resources:
+    Bookings:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: id
+            AttributeType: S
+          -
+            AttributeName: end_date
+            AttributeType: N
+        KeySchema:
+          -
+            AttributeName: id
+            KeyType: HASH
+          -
+            AttributeName: end_date
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        TableName: Reservations

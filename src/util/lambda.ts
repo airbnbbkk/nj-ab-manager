@@ -25,12 +25,14 @@ class LambdaUtil extends Singleton {
 
     public async invoke(params: Lambda.Types.InvocationRequest) {
         const lambda = new Lambda();
+        const payload = JSON.parse(params.Payload as string);
 
         return await lambda.invoke(params)
             .promise()
             .then(res => {
                 let response = null;
-                if (params.InvocationType === 'RequestResponse') {
+
+                if (payload.body) {
                     response = this.convertInvocationResToLambdaProxyRes(res);
                 }
                 console.log(`Lambda ${params.FunctionName} invoked successfully`, response);

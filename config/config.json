@@ -1,0 +1,9 @@
+{
+  "aws": {
+    "schedule": {
+      "schedule_new_booking": {
+        "interval": "5"
+      }
+    }
+  }
+}

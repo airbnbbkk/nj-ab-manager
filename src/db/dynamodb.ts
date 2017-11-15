@@ -106,7 +106,7 @@ export class Dynamodb extends Singleton {
     }
 
     public createBatchWriteParam(items: any[], keyList?: string[]) {
-        const timestamp = new Date().getTime();
+        const timestamp = new Date().getTime().toString();
         const params = items.map((item: any) => {
 
             const param: any = {
@@ -148,7 +148,6 @@ export class Dynamodb extends Singleton {
 
         function _assign(t: Dict, k: string, o: any) {
             const name = k.split('=');
-            console.log('_assign', t, name, o);
             t[name[1] || name[0]] = o[name[0]];
         }
     }

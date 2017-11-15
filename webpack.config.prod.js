@@ -5,7 +5,7 @@ const path = require('path');
 
 module.exports = {
     entry: slsw.lib.entries,
-    externals: [nodeExternals(), 'aws-sdk'],
+    externals: [nodeExternals(), 'aws-sdk', 'source-map-support'],
     resolve: {
         extensions: [
             '.js',
@@ -24,15 +24,16 @@ module.exports = {
         rules: [
             {
                 test: /\.ts(x?)$/,
-                use: [
-                    {
-                        loader: 'ts-loader'
-                    }
-                ],
+                use: [{
+                    loader: 'ts-loader'
+                }],
             }
         ]
     },
     plugins: [
-        new UglifyJSPlugin()
+        new UglifyJSPlugin({
+            compress: {warnings: false},
+            //sourceMap: true
+        })
     ]
 };
