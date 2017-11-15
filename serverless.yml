@@ -102,7 +102,7 @@ custom:
 
 resources: ${self:custom.service.resources}
 functions:
-  test: ${self:custom.service.functions.test}
+  # test: ${self:custom.service.functions.test}
   receive:
     handler: src/handlers/auth.receive
     events:

@@ -6,7 +6,7 @@ import { Singleton } from '../singleton/singleton';
 class LambdaUtil extends Singleton {
     public convertInvocationResToLambdaProxyRes(res: Lambda.InvocationResponse): ProxyResult {
         console.log('converting invocation response', res);
-        if (!res) {
+        if (!res.Payload) {
             console.log('invocation response is false', res);
             return null;
         }
@@ -30,6 +30,7 @@ class LambdaUtil extends Singleton {
         return await lambda.invoke(params)
             .promise()
             .then(res => {
+                console.log(`Got Lambda response: ${params.FunctionName}`, res);
                 let response = null;
 
                 if (payload.body) {
