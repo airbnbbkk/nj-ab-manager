@@ -21,7 +21,7 @@ export class GoogleApi extends Singleton {
                 userId: 'stardom8387@gmail.com',
                 labelIds: ['Label_16'],
                 // q: `after:${time.toEpoch(time.addDays(time.now(), -1))}`
-                q: `after:${time.toEpoch(time.subMinutes(time.now(), minutes))}`
+                q: `after:${time.toEpoch(time.subMinutes(time.startOfMinute(time.now()), minutes))}`
             }, (err, messages) => {
                 if (err) {
                     console.error(err);
