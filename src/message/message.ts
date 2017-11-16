@@ -302,6 +302,6 @@ export class Message extends Singleton {
 
     public messageNewBooking(newBookingDto: any) {
         const message = this._geNewBookingtMessage(newBookingDto);
-        this.send(Stage === 'dev' ? 276569855 : newBookingDto.id, message);
+        this.send(Stage === 'dev' ? 276569855 : newBookingDto.threadId, message);
     }
 }
