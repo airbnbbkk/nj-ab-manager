@@ -156,7 +156,7 @@ export class Message extends Singleton {
             '\n' +
             '请查看下面的客人页面\n' +
             '\n' +
-            `https://airbnb-bangkok.com/#/info/nj_${HOUSE_INFO[newBookingDto.listingId].code}\n?lang=cn` +
+            `https://airbnb-bangkok.com/#/info/nj_${HOUSE_INFO[newBookingDto.listingId].code}?lang=cn` +
             '\n' +
             '在访客页面中，您可以看到以下内容，\n' +
             '\n' +
