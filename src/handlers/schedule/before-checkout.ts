@@ -15,7 +15,7 @@ const sendMessage: Handler = async (_event: any,
 
     const options = {
         start_date: time.format(today, 'YYYY-MM-DD'),
-        end_date: time.format(today, 'YYYY-MM-DD')
+        end_date: time.format(time.addDays(today, 1), 'YYYY-MM-DD')
     };
 
     try {

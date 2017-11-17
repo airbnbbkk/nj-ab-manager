@@ -72,30 +72,30 @@ export class Message extends Singleton {
     }
 
     public async messageBeforeCheckIn(calendars: any[]) {
-        const threadIdList: any[] = calendars
-            .filter((calendar: any) => !calendar.days[0].available)
-            .filter((calendar: any) => this._getDaysLeftToCheckIn(calendar) === 1)
-            .map((calendar: any) => calendar.days[0].reservation.thread_id);
+        const calendarList: any[] = calendars
+            .filter((calendar: any) => !calendar.days[1].available)
+            .filter((calendar: any) => calendar.days[0].available || this._isDifferentBooking(calendar));
 
-        console.log('threadIdList', threadIdList);
+        console.log('calendarList', calendarList);
 
-        threadIdList.forEach(async (threadId: number) => {
+        calendarList.forEach(async (calendar: any) => {
+            const threadId = calendar.days[1].reservation.thread_id;
             const messageLang = await this.checkMessageLang(threadId);
-            this.send(threadId, this._getBeforeCheckInMessage(messageLang));
+            this.send(threadId, this._getBeforeCheckInMessage(messageLang, calendar.days[0].available));
         });
     }
 
     public messageBeforeCheckOut(calendars: any[]) {
-        const threadIdList: any[] = calendars
+        const calendarList: any[] = calendars
             .filter((calendar: any) => !calendar.days[0].available)
-            .filter((calendar: any) => this._getDaysLeftToCheckOut(calendar) === 1)
-            .map((calendar: any) => calendar.days[0].reservation.thread_id);
+            .filter((calendar: any) => calendar.days[1].available || this._isDifferentBooking(calendar));
 
-        console.log('threadIdList', threadIdList);
+        console.log('calendarList', calendarList);
 
-        threadIdList.forEach(async (threadId: number) => {
+        calendarList.forEach(async (calendar: any) => {
+            const threadId = calendar.days[0].reservation.thread_id;
             const messageLang = await this.checkMessageLang(threadId);
-            this.send(threadId, this._getBeforeCheckOutMessage(messageLang));
+            this.send(threadId, this._getBeforeCheckOutMessage(messageLang, calendar.days[1].available));
         });
     }
 
@@ -224,54 +224,52 @@ export class Message extends Singleton {
         return lang;
     }
 
-    private _getDaysLeftToCheckIn(calendar: any) {
-        const todayDate = time.startOfDay(time.toLocalTime(time.now())).getTime();
-        const checkInDate = new Date(calendar.days[0].reservation.start_date).getTime();
-        const daysLeft = time.differenceInDays(checkInDate, todayDate);
-
-        return daysLeft;
+    private _isDifferentBooking(calendar: any) {
+        return calendar.days[0].reservation.confirmation_code !== calendar.days[1].reservation.confirmation_code;
     }
 
-    private _getDaysLeftToCheckOut(calendar: any) {
-        const todayDate = time.startOfDay(time.toLocalTime(time.now()));
-        const checkInDate = new Date(calendar.days[0].reservation.start_date).getTime();
-        const daysStayed = time.differenceInDays(todayDate, checkInDate);
-
-        return calendar.days[0].reservation.nights - daysStayed;
-    };
-
-    private _getBeforeCheckOutMessage(lang: string) {
+    private _getBeforeCheckOutMessage(lang: string, isTmrEmpty: boolean) {
         const messages: { [lang: string]: string } = {
             en: 'Hello, is everything OK with your stay?\n' +
             '\n' +
             'I hope you have been comfortable in our house and please let us know if you have any trouble or any question.\n' +
             '\n' +
-            'And may I know what time are you planning to check out tomorrow?\n' +
+            'And also may I know what time are you planning to check out tomorrow?\n' +
             '\n' +
+            'Please be advised that ' +
+            `${isTmrEmpty ? 'you can check out late up to 6 hours' : 'there is another guest checking in tomorrow so your check out should be no later than 12:00 as our maid will go to the house between 12:00 to 12:30 for cleaning'}` +
+            '\n\n' +
             'Thank you.',
             ko: '안녕하세요, 지내시는데 별 문제 없으신가요?\n' +
             '\n' +
             '저희 집에서 편안히 지내시고 계셨길 바라며 만약 문제가 있으시거나 궁금한 점이 있으시면 언제든지 문의 주시기 바랍니다.\n' +
             '\n' +
             '그리고 혹시 내일 몇시에 체크아웃 하실 예정인지 알 수 있을까요?\n' +
-            '\n' +
+            `${isTmrEmpty ? '최대 6시간까지 늦은 체크아웃이 가능하니 참고 부탁드립니다.' : '내일 체크인 하는 다른 게스트가 있는 관계로 12:00시 이후 체크아웃은 삼가 부탁 드리며 집 청소를 위해 메이드가 12:00시 에서 12:30시 에 방문 예정입니다.'}` +
+            '\n\n' +
             '감사합니다.',
             cn: '你好，你住的地方一切都好吗？\n' +
             '\n' +
             '我希望你在我们家里有一个舒适的住宿，如果你有任何困难或问题，请告诉我们。\n' +
             '\n' +
             '我可以知道明天你打算什么时候退房？\n' +
-            '\n' +
+            `${isTmrEmpty ? '您可以在6个小时内退房' : '还有另一位客人明天检查，所以您的退房时间不得晚于12:00。 我们的女仆将在12:00至12:30之间前往酒店进行清洁'}`
+            + '\n\n' +
             '谢谢。'
         };
 
         return messages[lang];
     };
 
-    private _getBeforeCheckInMessage(lang: string) {
+    private _getBeforeCheckInMessage(lang: string, isTodayEmpty: boolean) {
+
+
         const messages: { [lang: string]: string } = {
             en: 'Hello, you are checking in tomorrow!\n' +
             '\n' +
+            'Can you please confirm your estimated arrival time? Please be advised that ' +
+            `${isTodayEmpty ? 'you can check in early up to 6 hours so please let us know' : 'there\'s another guest staying before you so your check in time should be after 14:00'}`
+            + '\n\n' +
             'Before your arrival, please make sure that you know how to check in which is explained in the video that\'s on the guest page I sent you previously.\n' +
             '\n' +
             'And please read all the information in the guest page so that you won\'t have any trouble upon your check in.\n' +
@@ -281,13 +279,19 @@ export class Message extends Singleton {
             'Thank you and have a safe trip to Bangkok!\n',
             ko: '안녕하세요, 내일 체크인 하시는 군요!\n' +
             '\n' +
+            '혹시 몇시에 도착 예정이신지 알 수 있을까요? ' +
+            `${isTodayEmpty ? '원하신다면 최대 6시간까지 일찍 체크인이 가능하니 말씀 주시기 바랍니다.' : '먼저 숙박중인 다른 게스트분 있는 관계로 체크인 시간은 14:00시 이후부터 가능합니다.'}` +
+            '\n\n' +
             '도착하시기 전에 제가 보내드린 게스트 페이지에서 체크인 하는 방법을 꼭 확인해 주시구요, 숙박에 필요한 다른 내용들도 게스트 페이지에 있으니 꼭 확인 부탁드립니다.\n' +
             '\n' +
-            '언제든지 궁금한 점 있으시면 질문 주시구요, 조심히 오세요!\n' +
+            '언제든지 궁금한 점 있으시면 질문 주시기 바라며, 조심히 오세요!\n' +
             '\n' +
             '감사합니다.',
             cn: '你好。 你明天将登记入住！\n' +
             '\n' +
+            '你能确认你的预计到达时间吗？ ' +
+            `${isTodayEmpty ? '您可以提前6小时办理登机手续，请告诉我们' : '还有另一位客人在你面前，所以你的登记入住时间应该在14:00之后'}`
+            + '\n\n' +
             '在您抵达之前，请确保您知道如何办理登机手续，在我之前寄给您的客人页面上的视频中有解释。\n' +
             '\n' +
             '请阅读客人页面上的所有信息，以免在入住时遇到任何问题。\n' +

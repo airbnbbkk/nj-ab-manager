@@ -14,7 +14,7 @@ const beforeCheckin: Handler = async (_event: any,
     console.log('today', today);
 
     const options = {
-        start_date: time.format(time.addDays(today, 1), 'YYYY-MM-DD'),
+        start_date: time.format(today, 'YYYY-MM-DD'),
         end_date: time.format(time.addDays(today, 1), 'YYYY-MM-DD')
     };
 
