@@ -88,6 +88,10 @@ export const UNIX_TIME = {
     DAY: 86400000
 };
 
+export const TIME_POLICY = {
+    LATE_CHECKOUT_HOURS: 4
+};
+
 export const HOUSE_INFO: { [code: number]: any } = {
     16268602: {
         code: 1,

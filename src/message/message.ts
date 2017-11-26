@@ -1,5 +1,5 @@
 import { Airbnb } from '../airbnb/airbnb';
-import { AIRBNB_API, HOUSE_INFO, Stage } from '../constants';
+import { AIRBNB_API, HOUSE_INFO, Stage, TIME_POLICY } from '../constants';
 import { Singleton } from '../singleton/singleton';
 import { Time } from '../util/time';
 
@@ -237,7 +237,7 @@ export class Message extends Singleton {
             'And also may I know what time are you planning to check out tomorrow?\n' +
             '\n' +
             'Please be advised that ' +
-            `${isTmrEmpty ? 'you can check out late up to 6 hours' : 'there is another guest checking in tomorrow so your check out should be no later than 12:00 as our maid will go to the house between 12:00 to 12:30 for cleaning'}` +
+            `${isTmrEmpty ? `you can check out late up to ${TIME_POLICY.LATE_CHECKOUT_HOURS} hours as there's no guest checking in tomorrow. However, in case a new booking comes in, you will have to check out on time.` : 'there is another guest checking in tomorrow so your check out should be no later than 12:00 as our maid will go to the house between 12:00 to 12:30 for cleaning'}` +
             '\n\n' +
             'Thank you.',
             ko: '안녕하세요, 지내시는데 별 문제 없으신가요?\n' +
@@ -245,7 +245,7 @@ export class Message extends Singleton {
             '저희 집에서 편안히 지내시고 계셨길 바라며 만약 문제가 있으시거나 궁금한 점이 있으시면 언제든지 문의 주시기 바랍니다.\n' +
             '\n' +
             '그리고 혹시 내일 몇시에 체크아웃 하실 예정인지 알 수 있을까요?\n' +
-            `${isTmrEmpty ? '최대 6시간까지 늦은 체크아웃이 가능하니 참고 부탁드립니다.' : '내일 체크인 하는 다른 게스트가 있는 관계로 12:00시 이후 체크아웃은 삼가 부탁 드리며 집 청소를 위해 메이드가 12:00시 에서 12:30시 에 방문 예정입니다.'}` +
+            `${isTmrEmpty ? `현재 내일 체크인 고객이 아직 없기에 최대 ${TIME_POLICY.LATE_CHECKOUT_HOURS}시간까지 늦은 체크아웃이 가능합니다. 다만 혹시라도 예약이 들어오게 된다면 부득이 하게 정시 체크아웃을 요청드리게 되는점 참고 부탁드립니다.` : '내일 체크인 하는 다른 게스트가 있는 관계로 12:00시 이후 체크아웃은 삼가 부탁 드리며 집 청소를 위해 메이드가 12:00시 에서 12:30시 에 방문 예정입니다.'}` +
             '\n\n' +
             '감사합니다.',
             cn: '你好，你住的地方一切都好吗？\n' +
@@ -253,7 +253,7 @@ export class Message extends Singleton {
             '我希望你在我们家里有一个舒适的住宿，如果你有任何困难或问题，请告诉我们。\n' +
             '\n' +
             '我可以知道明天你打算什么时候退房？\n' +
-            `${isTmrEmpty ? '您可以在6个小时内退房' : '还有另一位客人明天检查，所以您的退房时间不得晚于12:00。 我们的女仆将在12:00至12:30之间前往酒店进行清洁'}`
+            `${isTmrEmpty ? `您可以在${TIME_POLICY.LATE_CHECKOUT_HOURS}个小时内退房。如果有新的预订，您必须按时退房。` : '还有另一位客人明天检查，所以您的退房时间不得晚于12:00。 我们的女仆将在12:00至12:30之间前往酒店进行清洁'}`
             + '\n\n' +
             '谢谢。'
         };
