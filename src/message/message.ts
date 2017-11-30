@@ -225,7 +225,13 @@ export class Message extends Singleton {
     }
 
     private _isDifferentBooking(calendar: any) {
-        return calendar.days[0].reservation.confirmation_code !== calendar.days[1].reservation.confirmation_code;
+        if (!calendar.days[0].reservation) {
+            return false
+        } else if (!calendar.days[1].reservation) {
+            return true
+        } else {
+            return calendar.days[0].reservation.confirmation_code !== calendar.days[1].reservation.confirmation_code;
+        }
     }
 
     private _getBeforeCheckOutMessage(lang: string, isTmrEmpty: boolean) {

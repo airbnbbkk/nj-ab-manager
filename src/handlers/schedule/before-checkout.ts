@@ -23,7 +23,7 @@ const sendMessage: Handler = async (_event: any,
         const res = await calendar.get(options);
         const calendars = JSON.parse(res.body).calendars;
 
-        // console.log('bookings', JSON.stringify(calendars));
+        console.log('bookings', JSON.stringify(calendars));
 
         const threadIdList = await message.messageBeforeCheckOut(calendars);
 

@@ -33,7 +33,7 @@ module.exports = {
     plugins: [
         new UglifyJSPlugin({
             compress: {warnings: false},
-            //sourceMap: true
+            sourceMap: true
         })
     ]
 };
