@@ -15,7 +15,7 @@ export class Message extends Singleton {
                 method: 'POST',
                 path: AIRBNB_API.ENDPOINTS.MESSAGE_PATH,
                 data: {
-                    thread_id: threadIds,
+                    thread_id: Stage === 'dev' ? 276569855 : threadIds,
                     message: msg
                 }
             });
@@ -23,7 +23,7 @@ export class Message extends Singleton {
         } else if (threadIds.constructor.name === 'Array') {
             (threadIds as number[]).forEach(async (threadId) => {
                 const reqBody = {
-                    thread_id: threadId,
+                    thread_id: Stage === 'dev' ? 276569855 : threadId,
                     message: msg
                 };
                 return airbnb.request({
@@ -69,6 +69,21 @@ export class Message extends Singleton {
 
         return this.findLanguage(JSON.parse(res.body).thread.message_snippet);
 
+    }
+
+    public async messageAfterCheckIn(calendars: any[]) {
+        const calendarList: any[] = calendars
+            .filter((calendar: any) => calendar.days[0].reservation && calendar.days[1].reservation) // make sure both days have reservations.
+            .filter((calendar: any) => calendar.days[0].date === calendar.days[1].reservation.start_date) // a guest who checked in yesterday
+            .filter((calendar: any) => calendar.days[0].reservation.confirmation_code === calendar.days[1].reservation.confirmation_code); // a guest who doesn't check out today.
+
+        console.log('calendarList', calendarList);
+
+        calendarList.forEach(async (calendar: any) => {
+            const threadId = calendar.days[1].reservation.thread_id;
+            const messageLang = await this.checkMessageLang(threadId);
+            this.send(threadId, this._getAfterCheckInMessage(messageLang));
+        });
     }
 
     public async messageBeforeCheckIn(calendars: any[]) {
@@ -314,6 +329,49 @@ export class Message extends Singleton {
             '随时随地问任何问题。\n' +
             '\n' +
             '谢谢，请安全前往曼谷。'
+        };
+
+        return messages[lang];
+    };
+
+    private _getAfterCheckInMessage(lang: string) {
+
+        const messages: { [lang: string]: string } = {
+            en: 'Good morning, is everything ok?\n' +
+            'Please contact me anytime if you have a question :)\n\n' +
+            'And I\'d like to gently remind you two things the most important during stay. \n\n' +
+            '1. Please save electricity:\n\n' +
+            ' We check your electricity usage upon your check out, and if the usage volume is excessive, we will have to charge you a usage fee.\n' +
+            ' Please don\'t worry though, as long as you turn off the air conditioners and lights before going out, you will NEVER reach such excessive usage.\n' +
+            ' Some guests never turn off ACs and lights so that\'s why we had to start checking the electricity usage.\n\n' +
+            '2. Please do not lose key cards\n\n' +
+            ' As written in House Rules section of our guest page, we charge 2,000 baht for losing a key card.\n' +
+            ' It\'s very difficult to make a new key card due to unnecessarily complicated process which costs me a lot of time and efforts.\n' +
+            ' So please be extra careful not to lose key cards.\n\n' +
+            'Thank you for sparing your time to read my message and have a great day in Bangkok!',
+            ko: '좋은 아침입니다! 지내시는데 불편한 점은 없으신가요?\n' +
+            '문의 사항이 있으시면 언제든지 연락 주시기 바랍니다. ^^\n\n' +
+            '그리고 지내시는 동안 꼭 중요한 포인트 2가지만 말씀드리고자 합니다.\n\n' +
+            '1. 전기 절약:  \n\n' +
+            ' 체크아웃 하실때 머무시는 동안 사용하신 전기량을 체크합니다. 만약 사용하신 전기사용량이 너무 과도할 경우에는 추가로 전기 사용료를 청구드립니다.\n' +
+            ' 외출하실때 에어콘와 전등만 꼭 꺼주시면 \'절대\' 과도한 전기 사용량이 나올 수 없으니 이 부분만 지켜주시면 걱정하지 않으셔도 됩니다.\n' +
+            ' 몇몇 게스트 분들께서 에어콘과 전등을 항상 켜 놓아 부득이 하게 전기 사용량 체크를 하게 된점 정중히 양해 부탁드립니다.\n\n' +
+            '2. 카드키 분실 주의:\n\n' +
+            ' 게스트 페이지에 있는 규칙란에도 써 놓았지만, 카드키를 분실하시게 되면 2,000 바트의 금액이 청구됩니다.\n' +
+            ' 이는 카드키를 재발급 하는 과정이 과도하게 복잡하게 되어 있어서 제가 회사를 하루 쉬고 경찰서와 콘도 오피스를 방문해야만 하기 때문입니다.\n' +
+            ' 따라서 카드키를 분실하지 않도록 정말 주의를 부탁 드리겠습니다.\n\n' +
+            '메세지가 길었는데 시간내어 읽어주셔서 감사드리구요, 방콕에서 즐거운 시간 보내시기 바랍니다!',
+            cn: '早安，一切都好吗？如果您有任何问题，请随时与我联系：）\n\n' +
+            '我想让你提醒你在逗留期间最重要的两件事情。 \n\n' +
+            '1。请省电：\n \n' +
+            ' 我们检查您的电力使用情况，如果使用量过高，我们将不得不向您收取使用费。\n' +
+            ' 请不要担心。只要您外出时关掉空调和灯光，就不会有这样的过度使用。\n' +
+            ' 有些客人从不关掉空调和灯，所以我们不得不开始检查电力使用情况。\n \n' +
+            '2。请不要丢失钥匙卡\n \n' +
+            ' 正如我们访客页面的房屋规则部分所写，我们因丢失钥匙卡而收取2000泰铢。\n' +
+            ' 由于不必要的复杂过程，制作新的密钥卡是非常困难的。为此，我甚至不得不休息一天，去参观警察局和公寓办公室。\n' +
+            ' 所以请特别注意不要丢失钥匙卡。\n \n' +
+            '谢谢你节省时间阅读我的信息，在曼谷度过美好的一天!'
         };
 
         return messages[lang];

@@ -1,6 +1,4 @@
 functions:
-  test:
-    handler: src/handlers/test.test
   airbnb_send_message:
     handler: src/handlers/airbnb/message/send.send
     events:
@@ -31,6 +29,13 @@ functions:
         - schedule:
             enabled: true
             rate: cron(0 1 * * ? *)
+      timeout: 20
+  schedule_after_checkin:
+      handler: src/handlers/schedule/after-checkin.handler
+      events:
+        - schedule:
+              enabled: true
+              rate: cron(0 2 * * ? *)
       timeout: 20
 
 resources:

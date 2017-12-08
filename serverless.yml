@@ -114,6 +114,7 @@ functions:
   schedule_before_checkout: ${self:custom.service.functions.schedule_before_checkout}
   schedule_new_booking: ${self:custom.service.functions.schedule_new_booking}
   schedule_before_checkin: ${self:custom.service.functions.schedule_before_checkin}
+  schedule_after_checkin: ${self:custom.service.functions.schedule_after_checkin}
   google_api_call: ${self:custom.service.functions.google_api_call}
 
 

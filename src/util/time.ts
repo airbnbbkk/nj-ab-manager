@@ -9,6 +9,7 @@ export class Time extends Singleton {
     private _endOfMonth = require('../../node_modules/date-fns/end_of_month');
     private _differenceInDays = require('../../node_modules/date-fns/difference_in_calendar_days');
     private _subMinutes = require('../../node_modules/date-fns/sub_minutes');
+    private _subDays = require('../../node_modules/date-fns/sub_days');
 
     public now() {
         return new Date();
@@ -54,6 +55,10 @@ export class Time extends Singleton {
 
     public subMinutes(date: Date, minutes: number) {
         return this._subMinutes(date, minutes);
+    }
+
+    public subDays(date: Date, days: number) {
+        return this._subDays(date, days);
     }
 
 }
