@@ -17,6 +17,7 @@ export class Calendar extends Singleton {
             'listing_ids[]    ': '20777226',
             'listing_ids[]     ': '21170179',
             'listing_ids[]      ': '16874939',
+            'listing_ids[]       ': '22471822',
             'filter': 'all'
         }, param);
 
