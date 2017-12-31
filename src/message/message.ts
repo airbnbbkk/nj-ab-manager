@@ -110,7 +110,7 @@ export class Message extends Singleton {
         calendarList.forEach(async (calendar: any) => {
             const threadId = calendar.days[0].reservation.thread_id;
             const messageLang = await this.checkMessageLang(threadId);
-            this.send(threadId, this._getBeforeCheckOutMessage(messageLang, calendar.days[1].available));
+            this.send(threadId, this._getBeforeCheckOutMessage(messageLang, calendar));
         });
     }
 
@@ -249,29 +249,31 @@ export class Message extends Singleton {
         }
     }
 
-    private _getBeforeCheckOutMessage(lang: string, isTmrEmpty: boolean) {
+    private _getBeforeCheckOutMessage(lang: string, calendar: any) {
         const messages: { [lang: string]: string } = {
             en: 'Hello, is everything OK with your stay?\n' +
             '\n' +
             'I hope you have been comfortable in our house and if you have anything to say to improve our service, please let us hear your valuable advices! \n' +
             '\n' +
             'And please be advised that ' +
-            `${isTmrEmpty ? `you can check out late up to ${TIME_POLICY.LATE_CHECKOUT_HOURS} hours as there's no guest checking in tomorrow. However, in case a new booking comes in, you will have to check out on time.` : 'there is another guest checking in tomorrow so your check out should be no later than 12:00 as our maid will go to the house between 12:00 to 12:30'}` +
+            `${calendar.days[1].available ? `you can check out late up to ${TIME_POLICY.LATE_CHECKOUT_HOURS} hours as there's no guest checking in tomorrow. However, in case a new booking comes in, you will have to check out on time.` : 'there is another guest checking in tomorrow so your check out should be no later than 12:00 as our maid will go to the house between 12:00 to 12:30'}` +
             '\n' +
             'If you could, please let us know what time you are planning to check out tomorrow\n' +
             '\n' +
             'Lastly, please make sure to check \"how to check out\" section in our guest page.\n' +
+            `\nhttps://airbnb-bangkok.com/#/info/nj_${HOUSE_INFO[calendar.days[0].listing_id].code}/checkin?frag=checkout` +
             '\n\n' +
             'Thank you.',
             ko: '안녕하세요, 지내시는데 별 문제 없으신가요?\n' +
             '\n' +
             '저희 집에서 편안히 지내시고 계셨길 바라며 혹시라도 저희 서비스 개선에 도움이 될만한 소중한 의견이 있으시다면 감사히 듣겠습니다.\n' +
             '\n' +
-            `${isTmrEmpty ? `현재 내일 체크인 고객이 아직 없기에 최대 ${TIME_POLICY.LATE_CHECKOUT_HOURS}시간까지 늦은 체크아웃이 가능합니다. 다만 혹시라도 예약이 들어오게 된다면 부득이 하게 정시 체크아웃을 요청드리게 되는점 참고 부탁드립니다.` : '내일 체크인 하는 다른 게스트가 있는 관계로 12:00시 이후 체크아웃은 삼가 부탁 드리며 집 청소를 위해 메이드가 12:00시 에서 12:30시 에 방문 예정입니다.'}` +
+            `${calendar.days[1].available ? `현재 내일 체크인 고객이 아직 없기에 최대 ${TIME_POLICY.LATE_CHECKOUT_HOURS}시간까지 늦은 체크아웃이 가능합니다. 다만 혹시라도 예약이 들어오게 된다면 부득이 하게 정시 체크아웃을 요청드리게 되는점 참고 부탁드립니다.` : '내일 체크인 하는 다른 게스트가 있는 관계로 12:00시 이후 체크아웃은 삼가 부탁 드리며 집 청소를 위해 메이드가 12:00시 에서 12:30시 에 방문 예정입니다.'}` +
             '\n' +
-            '가능 하시다면, 내일 몇시에 체크인 하실지 알려주시면 감사드리겠습니다.\n' +
+            '가능 하시다면, 내일 몇시에 체크아웃 하실지 알려주시면 감사드리겠습니다.\n' +
             '\n' +
-            '마지막으로 저희 게스트 페이지에서 체크아웃 하는 방법을 한번 더 확인해 주시기를 부탁드리겠습니다.' +
+            '마지막으로 저희 게스트 페이지에서 체크아웃 하는 방법을 한번 더 확인해 주시기를 부탁드리겠습니다.\n' +
+            `\nhttps://airbnb-bangkok.com/#/info/nj_${HOUSE_INFO[calendar.days[0].listing_id].code}/checkin?lang=ko&frag=checkout` +
             '\n\n' +
             '감사합니다.',
             cn: '你好，你住的地方一切都好吗？\n' +
@@ -279,11 +281,12 @@ export class Message extends Singleton {
             '我希望你们在我们家舒服，如果你有什么话要改善我们的服务，请让我们听听你的宝贵意见！\n' +
             '\n' +
             '我可以知道明天你打算什么时候退房？\n' +
-            `${isTmrEmpty ? `您可以在${TIME_POLICY.LATE_CHECKOUT_HOURS}个小时内退房。如果有新的预订，您必须按时退房。` : '还有另一位客人明天检查，所以您的退房时间不得晚于12:00。 我们的女仆将在12:00至12:30之间前往酒店进行清洁'}` +
+            `${calendar.days[1].available ? `您可以在${TIME_POLICY.LATE_CHECKOUT_HOURS}个小时内退房。如果有新的预订，您必须按时退房。` : '还有另一位客人明天检查，所以您的退房时间不得晚于12:00。 我们的女仆将在12:00至12:30之间前往酒店进行清洁'}` +
             '\n' +
             '所以如果可以的话，请告诉我们明天你打算退房的时间。\n' +
             '\n' +
             '最后，请确保在我们的访客页面中查看“如何退房”部分。\n' +
+            `\nhttps://airbnb-bangkok.com/#/info/nj_${HOUSE_INFO[calendar.days[0].listing_id].code}/checkin?lang=cn&frag=checkout` +
             +'\n\n' +
             '谢谢。'
         };

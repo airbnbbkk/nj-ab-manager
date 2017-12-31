@@ -149,5 +149,13 @@ export const HOUSE_INFO: { [code: number]: any } = {
             pw: '1234512345'
         },
         doorlock: '08037*'
+    },
+    22471822: {
+        code: 8,
+        wifi: {
+            name: 'nui8',
+            pw: '1234512345'
+        },
+        doorlock: '08038*'
     }
 };
