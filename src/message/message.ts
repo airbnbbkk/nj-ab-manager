@@ -119,13 +119,22 @@ export class Message extends Singleton {
         const messages: { [lang: string]: any } = {
             en: 'Hello,\n' +
             '\n' +
-            'Thank you for booking our house! \n' +
-            '\n' +
-            'Please check this guest page \n' +
+            'Thank you for booking our house! \n\n' +
+            `${this._isAspireCondo(newBookingDto.listing_id) ?
+                'In order to check in, you *MUST* receive a key card of the house from our staff at the airport.' +
+                'The staff will be waiting at the gate number 3 holding your a name card of you.\n' +
+                'And Please tell us the followings so that our staff can be standing by on time.' :
+                'In case that you arrive by flight, would you please tell us the followings?\n\n'}` +
+            '- Flight name\n' +
+            '- Flight number\n' +
+            '- Arrival airport\n' +
+            '- Arrival time\n\n' +
+            'In case that you don\'t arrive by flight, please tell us the estimated time of your arrival to the house.\n\n' +
+            'Also please don\'t forget to check our guest page: \n' +
             '\n' +
             `https://airbnb-bangkok.com/#/info/nj_${HOUSE_INFO[newBookingDto.listingId].code}\n` +
             '\n' +
-            'where you can see: \n' +
+            'where you can check: \n' +
             '\n' +
             '- A guide video of how to check in\n' +
             '- A Thai voice instruction of how to go to the house which you can play it to a driver.\n' +
@@ -142,9 +151,18 @@ export class Message extends Singleton {
             'Feel free to ask any question anytime.\n' +
             '\n' +
             'Thank you!',
-            ko: '안녕하세요, 저희 집을 예약해 주셔서 정말 감사드립니다.\n' +
-            '\n' +
-            '아래 저희 게스트 페이지를 꼭 체크해 주시기 바랍니다\n' +
+            ko: '안녕하세요, 저희 집을 예약해 주셔서 정말 감사드립니다.\n\n' +
+            `${this._isAspireCondo(newBookingDto.listing_id) ?
+                '공항에 도착하시면 *반드시* 숙소 카드키를 공항에서 저희 직원에게 받으시기 바랍니다. ' +
+                '3번 게이트로 가시면 저희 직원이 네임 카드를 들고 대기하고 있을 예정입니다. ' +
+                '아래 사항을 말씀해 주시면 시간에 맞춰 카드키를 전달해 드릴 수 있습니다.\n' :
+                '항공편을 이용해 오신 다면 아래 사항을 말씀해 주실 수 있으실까요?\n\n'}` +
+            '- 항공사명\n' +
+            '- 항공편명\n' +
+            '- 도착 공항\n' +
+            '- 도착 시간\n\n' +
+            '만약 항공편을 이용하시지 않는다면 숙소 도착 예정 시간을 말씀 주시기 바랍니다.\n\n' +
+            '또한 아래 저희 게스트 페이지를 꼭 체크해 주시기 바랍니다\n' +
             '\n' +
             `https://airbnb-bangkok.com/#/info/nj_${HOUSE_INFO[newBookingDto.listingId].code}?lang=ko\n` +
             '\n' +
@@ -167,18 +185,23 @@ export class Message extends Singleton {
             '감사합니다.',
             cn: '你好，\n' +
             '\n' +
-            '谢谢你预订我们的房子！\n' +
-            '\n' +
-            '请查看下面的客人页面\n' +
-            '\n' +
-            `https://airbnb-bangkok.com/#/info/nj_${HOUSE_INFO[newBookingDto.listingId].code}?lang=cn` +
-            '\n' +
-            '在访客页面中，您可以看到以下内容，\n' +
-            '\n' +
+            '谢谢你预订我们的房子！\n\n' +
+            `${this._isAspireCondo(newBookingDto.listing_id) ?
+                '您必须在机场领取钥匙卡。 我们的工作人员会给你钥匙卡' +
+                '工作人员将在3号门口等候，拿着你的名片。' +
+                '请告诉我们以下情况，以便我们的员工能够准时出席。\n\n' :
+                '如果您乘飞机到达，请告诉我们以下情况？。\n\n'}` +
+            '- 航班名称\n' +
+            '- 航班号\n' +
+            '- 到达机场\n' +
+            '- 到达时间\n\n' +
+            '如果您没有乘飞机到达，请告诉我们您预计到达房屋的时间。\n\n' +
+            '请查看下面的客人页面\n\n' +
+            `https://airbnb-bangkok.com/#/info/nj_${HOUSE_INFO[newBookingDto.listingId].code}?lang=cn\n\n` +
+            '在访客页面中，您可以看到以下内容，\n\n' +
             '- 如何入住的指南视频\n' +
             '- 泰国语言教学如何去房子。\n' +
-            '- 房屋规则和设施信息。\n' +
-            '\n' +
+            '- 房屋规则和设施信息。\n\n' +
             '请注意，我们不会对因访客页面中的信息不正确而引起的任何不愉快的麻烦负责，所以请仔细阅读。\n' +
             '\n' +
             '另外我们可以提供付费班车服务，所以如果需要，请检查下面\n' +
@@ -194,60 +217,6 @@ export class Message extends Singleton {
 
         return messages[newBookingDto.lang];
     };
-
-    /*public messageNewBooking(threadList: any[]) {
-        const newBookingList: any[] = threadList
-            .filter((thread: any) => !!thread.inquiry_reservation && thread.inquiry_reservation.status === 'accepted')
-            .filter((thread: any) => !thread.responded)
-            .filter((thread: any) => {
-                const threadCreatedTime =
-                    time.toLocalTime(
-                        new Date(thread.inquiry_reservation.pending_expires_at)
-                    ).getTime() - UNIX_TIME.DAY;
-
-                return threadCreatedTime - nowLocalTime >= 0;
-            });
-
-        newBookingList.forEach(async (thread) => {
-            const messageLang = await this.checkMessageLang(threadId) ;
-            this.sendMessage(threadId, this._geNewBookingtMessage(messageLang, thread.inquiry_listing.id));
-
-            console.log('sendMessageParams', sendMessageParams);
-
-            await lambdaUtil.invoke(sendMessageParams);
-        });
-    }*/
-
-    public findLanguage(text: string): Locale {
-        let lang: Locale = 'en';
-
-        if (!text) {
-            return lang;
-        }
-
-        const tests = [
-            {regex: /[\uac00-\ud7af]+/g, lang: 'ko'},
-            {regex: /[\u4e00-\u9fff]+/g, lang: 'cn'}];
-
-        tests.forEach((test: any) => {
-            if (text.match(test.regex)) {
-                lang = test.lang;
-                return;
-            }
-        });
-
-        return lang;
-    }
-
-    private _isDifferentBooking(calendar: any) {
-        if (!calendar.days[0].reservation) {
-            return false
-        } else if (!calendar.days[1].reservation) {
-            return true
-        } else {
-            return calendar.days[0].reservation.confirmation_code !== calendar.days[1].reservation.confirmation_code;
-        }
-    }
 
     private _getBeforeCheckOutMessage(lang: string, calendar: any) {
         const messages: { [lang: string]: string } = {
@@ -294,52 +263,26 @@ export class Message extends Singleton {
         return messages[lang];
     };
 
-    private _getBeforeCheckInMessage(lang: string, calendarDay: any) {
+    public findLanguage(text: string): Locale {
+        let lang: Locale = 'en';
 
+        if (!text) {
+            return lang;
+        }
 
-        const messages: { [lang: string]: string } = {
-            en: 'Hello, you are checking in tomorrow!\n' +
-            '\n' +
-            'Can you please tell us your arrival time to the airport? ' +
-            '\n\nPlease be advised that ' +
-            `${this._isAspireCondo(calendarDay.listing_id) ? 'the mailbox room is no longer accessible without a key card so our maid will meet and give you a key card at the lobby.\n' : ''}` +
-            `${calendarDay.available ? 'And you can check in early up to 6 hours so please let us know if you would' : 'And there\'s another guest staying before you so your check in time should be after 14:00'}`
-            + '\n\n' +
-            'Before your arrival, please make sure that you know how to check in which is explained in the guest page I sent previously.\n' +
-            '\n' +
-            'And please read all other information in the guest page too so that you won\'t have any trouble upon your check in.\n' +
-            '\n' +
-            'Feel free to ask any question anytime.\n' +
-            '\n' +
-            'Thank you and have a safe trip to Bangkok!\n',
-            ko: '안녕하세요, 내일 체크인 하시는 군요!\n' +
-            '\n' +
-            '혹시 몇시에 공항 도착 예정이신지 알 수 있을까요? ' +
-            `${this._isAspireCondo(calendarDay.listing_id) ? '\n\n 얼마전부터 우편함실은 카드키로만 출입 가능 하도록 바뀌어 더이상 우편함에서 카드키를 가져 가실 수가 없게 되었습니다. 따라서 저희 메이드가 로비에서 카드키를 직접 드릴 수 있도록 하겠습니다.\n\n' : ''}` +
-            `${calendarDay.available ? '그리고 원하신다면 최대 6시간까지 일찍 체크인이 가능하니 말씀 주시기 바랍니다.' : '그리고 먼저 숙박중인 다른 게스트분이 있는 관계로 체크인 시간은 14:00시 이후부터 가능합니다.'}` +
-            '\n\n' +
-            '도착하시기 전에 제가 보내드린 게스트 페이지에서 체크인 하는 방법을 꼭 확인해 주시구요, 숙박에 필요한 다른 내용들도 게스트 페이지에 있으니 꼭 확인 부탁드립니다.\n' +
-            '\n' +
-            '언제든지 궁금한 점 있으시면 질문 주시기 바라며, 조심히 오세요!\n' +
-            '\n' +
-            '감사합니다.',
-            cn: '你好。 你明天将登记入住！\n' +
-            '\n' +
-            '你能确认你的预计到达时间吗？' +
-            `${this._isAspireCondo(calendarDay.listing_id) ? '\n\n 如果没有钥匙卡，邮箱房间将不能使用，因此我们的女仆会在大厅见面并给你一张钥匙卡。\n\n' : ''}` +
-            `${calendarDay.available ? '您可以提前6小时办理登机手续，请告诉我们' : '还有另一位客人在你面前，所以你的登记入住时间应该在14:00之后'}`
-            + '\n\n' +
-            '在您抵达之前，请确保您知道如何办理登机手续，在我之前寄给您的客人页面上的视频中有解释。\n' +
-            '\n' +
-            '请阅读客人页面上的所有信息，以免在入住时遇到任何问题。\n' +
-            '\n' +
-            '随时随地问任何问题。\n' +
-            '\n' +
-            '谢谢，请安全前往曼谷。'
-        };
+        const tests = [
+            {regex: /[\uac00-\ud7af]+/g, lang: 'ko'},
+            {regex: /[\u4e00-\u9fff]+/g, lang: 'cn'}];
 
-        return messages[lang];
-    };
+        tests.forEach((test: any) => {
+            if (text.match(test.regex)) {
+                lang = test.lang;
+                return;
+            }
+        });
+
+        return lang;
+    }
 
     private _getAfterCheckInMessage(lang: string) {
 
@@ -383,6 +326,83 @@ export class Message extends Singleton {
 
         return messages[lang];
     };
+
+    private _getBeforeCheckInMessage(lang: string, calendarDay: any) {
+
+
+        const messages: { [lang: string]: string } = {
+            en: 'Hello, you are checking in tomorrow!\n\n' +
+            'Please be advised that ' +
+            `${this._isAspireCondo(calendarDay.listing_id) ?
+                'the mailbox room is no longer accessible without a key card so you *MUST* meet our staff at the airport to receive a key card. ' +
+                'Please meet our staff holding a name card of you at gate number 3.\n' : ''}` +
+            `${calendarDay.available ? 'you can check in early up to 6 hours so please let us know if you would' : 'there\'s a guest staying before you so your check-in should be after 14:00'}\n\n` +
+            'And if you haven\'t yet, please tell us the followings:\n\n' +
+            '- Flight name\n' +
+            '- Flight number\n' +
+            '- Arrival airport\n' +
+            '- Arrival time\n' +
+            'In case that you don\'t arrive by flight, please tell us the estimated time of your arrival to the house.\n\n' +
+            'Before your arrival, please make sure that you know how to check in which is explained in the guest page I sent previously.\n' +
+            '\n' +
+            'Also, please read all other information in the guest page too so that you won\'t have any trouble upon your check in.\n' +
+            '\n' +
+            'Feel free to ask any question anytime.\n' +
+            '\n' +
+            'Thank you and have a safe trip to Bangkok!\n',
+            ko: '안녕하세요, 내일 체크인 하시는 군요!\n\n' +
+            `${this._isAspireCondo(calendarDay.listing_id) ?
+                '이제 부터 우편함실은 카드키로만 출입 가능 하도록 바뀌어 더 이상 우편함에서 카드키를 가져 가실 수가 없게 되었습니다. ' +
+                '따라서 *반드시* 공항에서 저희 직원을 만나 카드키를 받으시기 바랍니다. ' +
+                '입국장으로 나오셔서 3번 게이트로 가시면 저희 직원이 네임카드를 들고 대기하고 있을 예정입니다.\n' : ''}` +
+            `${calendarDay.available ?
+                '만약 원하신다면 최대 6시간까지 일찍 체크인이 가능하니 말씀 주시기 바랍니다.' :
+                '체크인 시간은 먼저 숙박중인 다른 게스트분이 있는 관계로 14:00시 이후부터 가능합니다.'}\n\n` +
+            '그리고 혹시 아직 말씀주시지 않았다면 다음 사항을 알려주시기 바랍니다.\n\n' +
+            '- 항공사명\n' +
+            '- 항공편명\n' +
+            '- 도착 공항\n' +
+            '- 도착 시간\n' +
+            '만약 항공편을 이용하지 않으신다면 숙소 도착 시간을 말씀 주시기 바랍니다.\n\n' +
+            '\n\n' +
+            '도착하시기 전에 제가 보내드린 게스트 페이지에서 체크인 하는 방법을 꼭 확인해 주시구요, 숙박에 필요한 다른 내용들도 게스트 페이지에 있으니 꼭 확인 부탁드립니다.\n' +
+            '\n' +
+            '언제든지 궁금한 점 있으시면 질문 주시기 바라며, 조심히 오세요!\n' +
+            '\n' +
+            '감사합니다.',
+            cn: '你好。 你明天将登记入住！\n\n' +
+            `${this._isAspireCondo(calendarDay.listing_id) ?
+                '如果没有钥匙卡，邮箱房间将无法使用，因此您必须在机场与我们的工作人员会面以获得钥匙卡。\n' +
+                '请在3号门迎接我们的工作人员持你的名片。\n' : ''}` +
+            `${calendarDay.available ?
+                '您可以提前6小时办理登机手续，请告诉我们' :
+                '还有另一位客人在你面前，所以你的登记入住时间应该在14:00之后'}\n\n` +
+            '如果您还没有告知，请告诉我们以下情况\n\n' +
+            '- 航班名称\n' +
+            '- 航班号\n' +
+            '- 到达机场\n' +
+            '- 到达时间\n' +
+            '如果您没有乘飞机到达，请告诉我们您预计到达房屋的时间。\n\n' +
+            '在您抵达之前，请确保您知道如何办理登机手续，在我之前寄给您的客人页面上的视频中有解释。\n\n' +
+            '请阅读客人页面上的所有信息，以免在入住时遇到任何问题。\n' +
+            '\n' +
+            '随时随地问任何问题。\n' +
+            '\n' +
+            '谢谢，请安全前往曼谷。'
+        };
+
+        return messages[lang];
+    };
+
+    private _isDifferentBooking(calendar: any) {
+        if (!calendar.days[0].reservation) {
+            return false
+        } else if (!calendar.days[1].reservation) {
+            return true
+        } else {
+            return calendar.days[0].reservation.confirmation_code !== calendar.days[1].reservation.confirmation_code;
+        }
+    }
 
     private _isAspireCondo(listingId: number) {
         return HOUSE_INFO[listingId].code >= 4 && HOUSE_INFO[listingId].code <= 7
