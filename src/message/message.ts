@@ -120,7 +120,7 @@ export class Message extends Singleton {
             en: 'Hello,\n' +
             '\n' +
             'Thank you for booking our house! \n\n' +
-            `${this._isAspireCondo(newBookingDto.listing_id) ?
+            `${this._isAspireCondo(newBookingDto.listingId) ?
                 'In order to check in, you *MUST* receive a key card of the house from our staff at the airport.' +
                 'The staff will be waiting at the gate number 3 holding your a name card of you.\n' +
                 'And Please tell us the followings so that our staff can be standing by on time.' :
@@ -152,7 +152,7 @@ export class Message extends Singleton {
             '\n' +
             'Thank you!',
             ko: '안녕하세요, 저희 집을 예약해 주셔서 정말 감사드립니다.\n\n' +
-            `${this._isAspireCondo(newBookingDto.listing_id) ?
+            `${this._isAspireCondo(newBookingDto.listingId) ?
                 '공항에 도착하시면 *반드시* 숙소 카드키를 공항에서 저희 직원에게 받으시기 바랍니다. ' +
                 '3번 게이트로 가시면 저희 직원이 네임 카드를 들고 대기하고 있을 예정입니다. ' +
                 '아래 사항을 말씀해 주시면 시간에 맞춰 카드키를 전달해 드릴 수 있습니다.\n' :
@@ -186,7 +186,7 @@ export class Message extends Singleton {
             cn: '你好，\n' +
             '\n' +
             '谢谢你预订我们的房子！\n\n' +
-            `${this._isAspireCondo(newBookingDto.listing_id) ?
+            `${this._isAspireCondo(newBookingDto.listingId) ?
                 '您必须在机场领取钥匙卡。 我们的工作人员会给你钥匙卡' +
                 '工作人员将在3号门口等候，拿着你的名片。' +
                 '请告诉我们以下情况，以便我们的员工能够准时出席。\n\n' :
