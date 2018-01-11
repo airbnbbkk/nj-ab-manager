@@ -121,9 +121,9 @@ export class Message extends Singleton {
             '\n' +
             'Thank you for booking our house! \n\n' +
             `${this._isAspireCondo(newBookingDto.listingId) ?
-                'In order to check in, you *MUST* receive a key card of the house from our staff at the airport.' +
-                'The staff will be waiting at the gate number 3 holding your a name card of you.\n' +
-                'And Please tell us the followings so that our staff can be standing by on time.' :
+                'In order to check in, you *MUST* receive a key card of the house from our staff at the airport.\n' +
+                'The staff will be waiting at between the gate number 3 and 4 holding a name card of you.\n' +
+                'And Please tell us the followings so that our staff can be standing by on time.\n\n' :
                 'In case that you arrive by flight, would you please tell us the followings?\n\n'}` +
             '- Flight name\n' +
             '- Flight number\n' +
@@ -154,8 +154,8 @@ export class Message extends Singleton {
             ko: '안녕하세요, 저희 집을 예약해 주셔서 정말 감사드립니다.\n\n' +
             `${this._isAspireCondo(newBookingDto.listingId) ?
                 '공항에 도착하시면 *반드시* 숙소 카드키를 공항에서 저희 직원에게 받으시기 바랍니다. ' +
-                '3번 게이트로 가시면 저희 직원이 네임 카드를 들고 대기하고 있을 예정입니다. ' +
-                '아래 사항을 말씀해 주시면 시간에 맞춰 카드키를 전달해 드릴 수 있습니다.\n' :
+                '3번 게이트와 4번 게이트 사이에 있는 장소로 가시면 저희 직원이 네임 카드를 들고 대기하고 있을 예정입니다. ' +
+                '아래 사항을 말씀해 주시면 시간에 맞춰 카드키를 전달해 드릴 수 있습니다.\n\n' :
                 '항공편을 이용해 오신 다면 아래 사항을 말씀해 주실 수 있으실까요?\n\n'}` +
             '- 항공사명\n' +
             '- 항공편명\n' +
@@ -188,7 +188,7 @@ export class Message extends Singleton {
             '谢谢你预订我们的房子！\n\n' +
             `${this._isAspireCondo(newBookingDto.listingId) ?
                 '您必须在机场领取钥匙卡。 我们的工作人员会给你钥匙卡' +
-                '工作人员将在3号门口等候，拿着你的名片。' +
+                '工作人员将在3号和4号门之间等候，持有你的名片。' +
                 '请告诉我们以下情况，以便我们的员工能够准时出席。\n\n' :
                 '如果您乘飞机到达，请告诉我们以下情况？。\n\n'}` +
             '- 航班名称\n' +
@@ -335,7 +335,7 @@ export class Message extends Singleton {
             'Please be advised that ' +
             `${this._isAspireCondo(calendarDay.listing_id) ?
                 'the mailbox room is no longer accessible without a key card so you *MUST* meet our staff at the airport to receive a key card. ' +
-                'Please meet our staff holding a name card of you at gate number 3.\n' : ''}` +
+                'Please meet our staff holding a name card of you at between gate number 3 and 4.\n' : ''}` +
             `${calendarDay.available ? 'you can check in early up to 6 hours so please let us know if you would' : 'there\'s a guest staying before you so your check-in should be after 14:00'}\n\n` +
             'And if you haven\'t yet, please tell us the followings:\n\n' +
             '- Flight name\n' +
@@ -354,7 +354,7 @@ export class Message extends Singleton {
             `${this._isAspireCondo(calendarDay.listing_id) ?
                 '이제 부터 우편함실은 카드키로만 출입 가능 하도록 바뀌어 더 이상 우편함에서 카드키를 가져 가실 수가 없게 되었습니다. ' +
                 '따라서 *반드시* 공항에서 저희 직원을 만나 카드키를 받으시기 바랍니다. ' +
-                '입국장으로 나오셔서 3번 게이트로 가시면 저희 직원이 네임카드를 들고 대기하고 있을 예정입니다.\n' : ''}` +
+                '입국장으로 나오셔서 3번 게이트와 4번 게이트 사이에 있는 장소로 가시면 저희 직원이 네임카드를 들고 대기하고 있을 예정입니다.\n' : ''}` +
             `${calendarDay.available ?
                 '만약 원하신다면 최대 6시간까지 일찍 체크인이 가능하니 말씀 주시기 바랍니다.' :
                 '체크인 시간은 먼저 숙박중인 다른 게스트분이 있는 관계로 14:00시 이후부터 가능합니다.'}\n\n` +
@@ -373,7 +373,7 @@ export class Message extends Singleton {
             cn: '你好。 你明天将登记入住！\n\n' +
             `${this._isAspireCondo(calendarDay.listing_id) ?
                 '如果没有钥匙卡，邮箱房间将无法使用，因此您必须在机场与我们的工作人员会面以获得钥匙卡。\n' +
-                '请在3号门迎接我们的工作人员持你的名片。\n' : ''}` +
+                '请在3号门和4号门之间见我们的工作人员持你的名片。\n' : ''}` +
             `${calendarDay.available ?
                 '您可以提前6小时办理登机手续，请告诉我们' :
                 '还有另一位客人在你面前，所以你的登记入住时间应该在14:00之后'}\n\n` +
